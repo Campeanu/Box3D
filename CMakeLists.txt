@@ -7,6 +7,7 @@ project(${This} C CXX)
 # Set the standard.
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 17)
 
 # This variable is used to initialize the POSITION_INDEPENDENT_CODE property on all the targets.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -73,8 +74,14 @@ if(ParentDirectory STREQUAL "")
     set(BUILD_GMOCK OFF CACHE BOOL "Builds the googlemock subproject" FORCE)
     add_subdirectory(Dependencies/googletest)
     set_target_properties(gtest gtest_main PROPERTIES
-        FOLDER Libraries
+        FOLDER Libraries/googletest
     )
+
+    set(JSON_BuildTests OFF CACHE INTERNAL "")
+    add_subdirectory(Dependencies/json)
+    #set_target_properties(nlohmann_json PROPERTIES
+    #    FOLDER Libraries
+    #)
 
     # Specify where to find external libraries.
     # Example:
@@ -84,5 +91,7 @@ endif(ParentDirectory STREQUAL "")
 # Add subdirectories directly in this repository.
 # Box3D:
 add_subdirectory(Box3D)
+# Sandbox:
+add_subdirectory(Sandbox)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

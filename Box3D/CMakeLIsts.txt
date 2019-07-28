@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.8)
 
 set(This Box3D)
 
+set(HEADERS 
+    include/Box3D/Application.hpp
+)
+
 set(SOURCES
     src/Application.cpp
 )
@@ -21,24 +25,25 @@ set(SOURCES
 # How to set an output path for an executable file  
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-# executable
-add_executable(${This} ${SOURCES})
+# library
+# add_executable(${This} ${SOURCES} ${HEADERS})
 
 # library
-# add_library(${This} STATIC ${SOURCES} ${HEADERS})
+add_library(${This} STATIC ${SOURCES} ${HEADERS})
 
-#target_link_libraries(${This} PUBLIC
-#    GLAD
-#    ImGUI
-#    GLEW
-#    glfw
-#    opengl32
-#)
+target_link_libraries(${This} PUBLIC
+    nlohmann_json::nlohmann_json
+#   GLAD
+#   ImGUI
+#   GLEW
+#   glfw
+#   opengl32
+)
 
 target_include_directories(${This} PUBLIC include)
 
 set_target_properties(${This} PROPERTIES 
-    FOLDER Applications
+    FOLDER Libraries
 )
 
 # add_subdirectory(test)
