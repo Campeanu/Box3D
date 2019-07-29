@@ -4,9 +4,11 @@ set(This Box3D)
 
 set(HEADERS 
     include/Box3D/Application.hpp
+    include/Box3D/Core.hpp
+    include/Box3D/EnteryPoint.hpp
 )
 
-set(SOURCES
+set(SOURCES  
     src/Application.cpp
 )
 
@@ -20,6 +22,7 @@ set(SOURCES
 
 # How to add compilation definitions:
 # add_compile_definitions(difinition)
+# Example:
 # add_compile_definitions(GLEW_STATIC)
 
 # How to set an output path for an executable file  

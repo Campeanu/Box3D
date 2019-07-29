@@ -28,7 +28,14 @@ link_directories(${mysql_connector}/lib64/vs14)
 
 # How to add compilation definitions:
 # add_compile_definitions(difinition)
+# Example
 # add_compile_definitions(GLEW_STATIC)
+
+# Specify platform: 
+#   * BOX3D_PLATFORM_WINDOW
+#   * BOX3D_PLATFORM_MACOSX
+#   * BOX3D_PLATFORM_LINUX
+add_compile_definitions(BOX3D_PLATFORM_WINDOW)
 
 # How to set an output path for an executable file  
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
