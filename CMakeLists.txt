@@ -86,6 +86,8 @@ if(ParentDirectory STREQUAL "")
     # Specify where to find external libraries.
     # Example:
     # set(Library "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/Library")
+    set(boost ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/boost)
+    set(MySQL ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/MySQL)
 
 endif(ParentDirectory STREQUAL "")
 # Add subdirectories directly in this repository.

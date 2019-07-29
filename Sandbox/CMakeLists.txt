@@ -13,10 +13,18 @@ set(SOURCES
 # -------------------------------------------
 # How to add a directory to include path: 
 # include_directories(${variable}/include)
+# -------------------------------------------
+# Boost:
+include_directories(${boost}/include)
+# MySQL:
+include_directories(${MySQL}/include/jdbc)
 
+
+# -------------------------------------------
 # How to add a directory to link path: 
 # link_directories(${variable}/lib)
 # -------------------------------------------
+link_directories(${MySQL}/lib64/vs14)
 
 # How to add compilation definitions:
 # add_compile_definitions(difinition)
@@ -34,6 +42,7 @@ add_executable(${This} ${SOURCES})
 # ------------------------------------------------ PRIVATE ------------------------------------------------
 target_link_libraries(${This} PRIVATE
     Box3D
+    mysqlcppconn
 #   nlohmann_json::nlohmann_json
 #   GLAD
 #   ImGUI
