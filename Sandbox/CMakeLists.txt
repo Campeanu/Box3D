@@ -17,14 +17,14 @@ set(SOURCES
 # Boost:
 include_directories(${boost}/include)
 # MySQL:
-include_directories(${MySQL}/include/jdbc)
+include_directories(${mysql_connector}/include/jdbc)
 
 
 # -------------------------------------------
 # How to add a directory to link path: 
 # link_directories(${variable}/lib)
 # -------------------------------------------
-link_directories(${MySQL}/lib64/vs14)
+link_directories(${mysql_connector}/lib64/vs14)
 
 # How to add compilation definitions:
 # add_compile_definitions(difinition)
