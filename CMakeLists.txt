@@ -93,6 +93,8 @@ endif(ParentDirectory STREQUAL "")
 # Add subdirectories directly in this repository.
 # Box3D:
 add_subdirectory(Box3D)
+# MySQL:
+add_subdirectory(MySQL)
 # Sandbox:
 add_subdirectory(Sandbox)
 

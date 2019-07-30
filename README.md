@@ -12,9 +12,10 @@ Each library in the solution comes with unit tests. There are two main ways to r
 2. Run individual unit test runners directly (e.g. build/Box3D/test/Debug/Box3DTests.exe).
 
 # Programs and libraries hosted in this solution
-* 
-*
-*
+* [Boost](https://www.boost.org/) provides free peer-reviewed portable C++ source libraries.
+* [googletest](https://github.com/google/googletest)  Google Testing and Mocking Framework.
+* [json](https://github.com/nlohmann/json) for Modern C++.
+* [MySQL Connector/C++](https://dev.mysql.com/downloads/connector/cpp/) provides developers a JDBC-like API driver for MySQL.
 # Supported platforms / recommended toolchains
 The following are recommended toolchains for popular platforms.
 * Windows -- [Visual Studio](https://www.visualstudio.com/) (Microsoft Visual C++)
@@ -28,7 +29,16 @@ There are two distinct steps in the build process:
 
 # Prerequisites
 * [CMake](https://cmake.org/) version 3.8 or newer
-* C++11 toolchain compatible with CMake for your development platform (e.g. [Visual Studio](https://www.visualstudio.com/) on Windows)
+* C++17 toolchain compatible with CMake for your development platform (e.g. [Visual Studio](https://www.visualstudio.com/) on Windows)
+
+# How to install
+```bash
+git clone https://github.com/Campeanu/Box3D.git
+
+git submodule init
+git submodule update
+```
+
 # Build system generation 
 ```bash
 mkdir build

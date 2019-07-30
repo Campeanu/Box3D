@@ -15,6 +15,10 @@ set(SOURCES
 # -------------------------------------------
 # How to add a directory to include path: 
 # include_directories(${variable}/include)
+include_directories(${boost}/include)
+# MySQL:
+include_directories(${mysql_connector}/include/jdbc)
+
 
 # How to add a directory to link path: 
 # link_directories(${variable}/lib)
@@ -36,6 +40,7 @@ add_library(${This} STATIC ${SOURCES} ${HEADERS})
 
 target_link_libraries(${This} PUBLIC
     nlohmann_json::nlohmann_json
+    MySQL
 #   GLAD
 #   ImGUI
 #   GLEW
