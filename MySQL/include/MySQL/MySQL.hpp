@@ -30,7 +30,8 @@ namespace mysql {
         void mysql_pstmt_execute();
 
         void mysql_print_retrieve_data(const sql::SQLString& sql, const sql::SQLString& colname);
-
+        sql::SQLString mysql_get_retrieve_data(const sql::SQLString& sql, const sql::SQLString& colname);
+    
     private:
 
         sql::Driver     *driver;

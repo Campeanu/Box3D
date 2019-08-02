@@ -2,6 +2,9 @@
 #define __APPLICATION_HPP_INCLUDED__
 
 #include <iostream>
+#include <sstream>
+
+#include <LoginSystem/Login.hpp>
 #include <MySQL/MySQL.hpp>
 
     namespace box3d {
@@ -19,12 +22,13 @@
             
             // Private methods 
         private:
+            void Application::getUserData();
             // Private properties
         private:
-            /*
-             * Create a new object of type MySQL
-             */
-            mysql::MySQL* connection;
+            Login* login;
+
+            std::string mailusername;
+            std::string password;
 
         }; // class Application
 

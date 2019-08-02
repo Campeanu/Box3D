@@ -70,4 +70,17 @@ namespace mysql {
         }
     }
 
+    sql::SQLString MySQL::mysql_get_retrieve_data(const sql::SQLString& sql, const sql::SQLString& colname)
+    {
+        this->res = this->stmt->executeQuery(sql);     
+        sql::SQLString data;
+
+        while (res->next()) {
+            data = res->getString(colname).c_str();
+            // std::cout << res->getString(colname).c_str() << std::endl;    
+        }
+
+        return data;
+    }
+
 }

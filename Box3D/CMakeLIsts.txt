@@ -41,6 +41,7 @@ add_library(${This} STATIC ${SOURCES} ${HEADERS})
 target_link_libraries(${This} PUBLIC
     nlohmann_json::nlohmann_json
     MySQL
+    LoginSystem
 #   GLAD
 #   ImGUI
 #   GLEW

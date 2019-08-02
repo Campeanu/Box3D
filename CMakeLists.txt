@@ -97,5 +97,7 @@ add_subdirectory(Box3D)
 add_subdirectory(MySQL)
 # Sandbox:
 add_subdirectory(Sandbox)
+# LoginSystem:
+add_subdirectory(LoginSystem)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
