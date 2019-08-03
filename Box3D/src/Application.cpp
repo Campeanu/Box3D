@@ -11,11 +11,18 @@ namespace box3d {
         std::cin >> this->password;
     }
 
+    bool Application::checkForLogin()
+    {
+        return false;
+    }
 
     Application::Application()
     {
-        this->getUserData();
-        this->login = new Login(sql::SQLString(this->mailusername.c_str()), sql::SQLString(this->password.c_str()));
+        if (this->checkForLogin())
+        {
+            this->getUserData();
+            this->login = new Login(sql::SQLString(this->mailusername.c_str()), sql::SQLString(this->password.c_str()));
+        }
     } 
         
     Application::~Application()

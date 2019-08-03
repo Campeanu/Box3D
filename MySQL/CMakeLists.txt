@@ -21,9 +21,9 @@ include_directories(${mysql_connector}/include/jdbc)
 
 add_library(${This} STATIC ${SOURCES} ${HEADERS})
 
-target_link_libraries(${This} PUBLIC 
-    nlohmann_json::nlohmann_json
-)
+# target_link_libraries(${This} PUBLIC 
+#    
+# )
 
 target_include_directories(${This} PUBLIC include)
 

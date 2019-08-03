@@ -23,6 +23,7 @@
             // Private methods 
         private:
             void Application::getUserData();
+            bool checkForLogin();
             // Private properties
         private:
             Login* login;

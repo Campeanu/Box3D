@@ -77,8 +77,8 @@ if(ParentDirectory STREQUAL "")
         FOLDER Libraries/googletest
     )
 
-    set(JSON_BuildTests OFF CACHE INTERNAL "")
-    add_subdirectory(Dependencies/json)
+    # set(JSON_BuildTests OFF CACHE INTERNAL "")
+    # add_subdirectory(Dependencies/json)
     #set_target_properties(nlohmann_json PROPERTIES
     #    FOLDER Libraries
     #)
