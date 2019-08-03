@@ -18,6 +18,9 @@ add_library(${This} STATIC ${SOURCES} ${HEADERS})
 
 target_link_libraries(${This} PUBLIC 
     MySQL
+    SystemAbstractions
+    Utf8
+    Json
 )
 
 target_include_directories(${This} PUBLIC include)

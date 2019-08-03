@@ -41,6 +41,9 @@ add_library(${This} STATIC ${SOURCES} ${HEADERS})
 target_link_libraries(${This} PUBLIC
     MySQL
     LoginSystem
+    Utf8
+    SystemAbstractions
+    Json
 #   GLAD
 #   ImGUI
 #   GLEW

@@ -77,11 +77,19 @@ if(ParentDirectory STREQUAL "")
         FOLDER Libraries/googletest
     )
 
+    # nlohmann Json
     # set(JSON_BuildTests OFF CACHE INTERNAL "")
     # add_subdirectory(Dependencies/json)
     #set_target_properties(nlohmann_json PROPERTIES
     #    FOLDER Libraries
     #)
+
+    # System abstraction:
+    add_subdirectory(Dependencies/SystemAbstractions)
+    # Json:
+    add_subdirectory(Dependencies/Json)
+    # Utf8
+    add_subdirectory(Dependencies/Utf8)
 
     # Specify where to find external libraries.
     # Example:

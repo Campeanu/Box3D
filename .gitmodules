@@ -7,3 +7,6 @@
 [submodule "Dependencies/Json"]
 	path = Dependencies/Json
 	url = https://github.com/rhymu8354/Json.git
+[submodule "Dependencies/Utf8"]
+	path = Dependencies/Utf8
+	url = https://github.com/rhymu8354/Utf8.git

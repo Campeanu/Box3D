@@ -4,6 +4,10 @@
 #include <iostream>
 #include <sstream>
 
+#include <Json/value.hpp>
+#include <SystemAbstractions/File.hpp>
+#include <SystemAbstractions/StringExtensions.hpp>
+
 #include <LoginSystem/Login.hpp>
 #include <MySQL/MySQL.hpp>
 
