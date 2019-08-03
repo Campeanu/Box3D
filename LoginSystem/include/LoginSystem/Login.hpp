@@ -4,6 +4,10 @@
 #include <iostream>
 #include <MySQL/MySQL.hpp>
 
+#include <Json/value.hpp>
+#include <SystemAbstractions/File.hpp>
+#include <SystemAbstractions/StringExtensions.hpp>
+
 namespace box3d {
 
     class Login
@@ -20,6 +24,17 @@ namespace box3d {
         /**
          * Database management
          */
+        std::string db_host;
+        std::string db_user;
+        std::string db_pass;
+        std::string db_name;
+
+        /**
+         * Configurations
+         */
+        Json::Value getDBConfigurations();
+        void initDBConfigurations();
+
         void createTable();
         void dropTable();
     };
