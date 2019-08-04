@@ -9,8 +9,8 @@
         {
 
             box3d::Log::Init();
-            box3d::Log::getCoreLogger()->warn("Initializate core log! Test warn log.");
-            box3d::Log::getClientLogger()->info("Initializate client log! Test info log.");
+            BOX3D_CORE_WARN("Initializate core log! Test warn log.");
+            BOX3D_INFO("Initializate client log! Test info log.");
 
             auto app = box3d::CreateApplication();
             app->run();
