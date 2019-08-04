@@ -13,7 +13,7 @@ namespace box3d {
 
     bool Application::checkForLogin()
     {
-        return true;
+        return false;
     }
 
     Application::Application()

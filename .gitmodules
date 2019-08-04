@@ -10,3 +10,6 @@
 [submodule "Dependencies/Utf8"]
 	path = Dependencies/Utf8
 	url = https://github.com/rhymu8354/Utf8.git
+[submodule "Dependencies/spdlog"]
+	path = Dependencies/spdlog
+	url = https://github.com/gabime/spdlog.git

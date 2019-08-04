@@ -4,9 +4,14 @@
     extern box3d::Application* box3d::CreateApplication();
 
     #ifdef BOX3D_PLATFORM_WINDOW
-
+        
         int main(int argc, char** argv)
         {
+
+            box3d::Log::Init();
+            box3d::Log::getCoreLogger()->warn("Initializate core log! Test warn log.");
+            box3d::Log::getClientLogger()->info("Initializate client log! Test info log.");
+
             auto app = box3d::CreateApplication();
             app->run();
             delete app;
