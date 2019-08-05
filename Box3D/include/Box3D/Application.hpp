@@ -11,6 +11,8 @@
 #include <LoginSystem/Login.hpp>
 #include <MySQL/MySQL.hpp>
 
+#include "Events/Event.hpp"
+
     namespace box3d {
         
         class Application {

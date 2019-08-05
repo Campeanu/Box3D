@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Box3D/include/Box3D/Events/"
             ],
             "defines": [
                 "_DEBUG",

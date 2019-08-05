@@ -7,6 +7,10 @@ set(HEADERS
     include/Box3D/Core.hpp
     include/Box3D/EnteryPoint.hpp
     include/Box3D/Log.hpp
+    include/Box3D/Events/ApplicationEvent.hpp
+    include/Box3D/Events/Event.hpp
+    include/Box3D/Events/KeyEvent.hpp
+    include/Box3D/Events/MouseEvent.hpp
 )
 
 set(SOURCES  

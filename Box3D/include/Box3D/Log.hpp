@@ -5,6 +5,7 @@
 
 #include "Core.hpp"
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 namespace box3d {
 
@@ -29,10 +30,10 @@ namespace box3d {
 #define BOX3D_CORE_FATAL(...)    ::box3d::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 
 // Client log macros
-#define BOX3D_TRACE(...)	      ::box3d::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define BOX3D_INFO(...)	     	  ::box3d::Log::GetClientLogger()->info(__VA_ARGS__)
-#define BOX3D_WARN(...)	    	  ::box3d::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define BOX3D_ERROR(...)	      ::box3d::Log::GetClientLogger()->error(__VA_ARGS__)
-#define BOX3D_FATAL(...)	      ::box3d::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define BOX3D_TRACE(...)	     ::box3d::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define BOX3D_INFO(...)	     	 ::box3d::Log::GetClientLogger()->info(__VA_ARGS__)
+#define BOX3D_WARN(...)	    	 ::box3d::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define BOX3D_ERROR(...)	     ::box3d::Log::GetClientLogger()->error(__VA_ARGS__)
+#define BOX3D_FATAL(...)	     ::box3d::Log::GetClientLogger()->fatal(__VA_ARGS__)
 
 #endif //!__LOG_HPP_INCLUDED__

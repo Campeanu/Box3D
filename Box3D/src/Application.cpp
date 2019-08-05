@@ -1,5 +1,8 @@
 #include "Box3D/Application.hpp"
 
+#include "Box3D/Events/ApplicationEvent.hpp"
+#include "Box3D/Log.hpp"
+
 namespace box3d {
 
     void Application::getUserData()
@@ -32,6 +35,13 @@ namespace box3d {
 
     void Application::run()
     {
+        
+        /**
+         * Test events
+         */
+        WindowResizeEvent e(1280, 720);
+        BOX3D_TRACE(e);
+
         while(true);
     }
 
