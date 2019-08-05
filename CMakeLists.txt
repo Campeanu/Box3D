@@ -90,13 +90,12 @@ if(ParentDirectory STREQUAL "")
     add_subdirectory(Dependencies/Json)
     # Utf8:
     add_subdirectory(Dependencies/Utf8)
-
     # Spdlog:
     add_subdirectory(Dependencies/spdlog)
     set_target_properties(spdlog PROPERTIES
         FOLDER Libraries/spdlog
     )
-
+    
     # Specify where to find external libraries.
     # Example:
     # set(Library "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/Library")
