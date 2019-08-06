@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <memory>
 
 #include <Json/value.hpp>
 #include <SystemAbstractions/File.hpp>
@@ -15,7 +16,7 @@
 
 #include "Window.hpp"
 
-#include <memory>
+#include "Box3D/Events/ApplicationEvent.hpp"
 
     namespace box3d {
         
@@ -25,6 +26,11 @@
             Application();  
             virtual ~Application();
 
+            /*
+             * Window events
+             */
+            void OnEvent(Event& e);
+
             /**
              * This function contain the main loop of our application
              */
@@ -32,6 +38,7 @@
             
             // Private methods 
         private:
+            bool OnWindowClose(WindowCloseEvent& e);
             void Application::getUserData();
             bool checkForLogin();
             // Private properties

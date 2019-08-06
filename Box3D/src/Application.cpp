@@ -1,9 +1,12 @@
 #include "Box3D/Application.hpp"
 
-#include "Box3D/Events/ApplicationEvent.hpp"
 #include "Box3D/Log.hpp"
 
+#include <GLFW/glfw3.h>
+
 namespace box3d {
+
+    #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
     void Application::getUserData()
     {
@@ -22,7 +25,9 @@ namespace box3d {
     Application::Application()
     {
         this->m_running = true;
+
         this->m_window = std::unique_ptr<Window>(Window::create());
+        this->m_window->setEventCallback(BIND_EVENT_FN(OnEvent));
 
         if (this->checkForLogin())
         {
@@ -33,7 +38,14 @@ namespace box3d {
         
     Application::~Application()
     {
-        delete this->login;
+        // delete this->login;
+    }
+
+    void Application::OnEvent(Event& e)
+    {
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+        // BOX3D_CORE_TRACE("{0}", e);
     }
 
     void Application::run()
@@ -41,8 +53,19 @@ namespace box3d {
         
         while(this->m_running)
         {
+        
+            // glClearColor(1, 0, 1, 1);
+            // glClear(GL_COLOR_BUFFER_BIT);
+           
             m_window->update();
+        
         }
+    }
+
+    bool Application::OnWindowClose(WindowCloseEvent& e)
+    {
+        this->m_running = false;
+        return true;
     }
 
 } // namespace box3d
