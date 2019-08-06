@@ -41,11 +41,31 @@ namespace box3d {
         // delete this->login;
     }
 
+    void Application::PushLayer(Layer* layer)
+    {
+        m_layerStack.PushLayer(layer);
+    }
+
+    void Application::PushOverLayer(Layer* layer)
+    {
+        m_layerStack.PushOverLayer(layer);
+    }
+
+
     void Application::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-        // BOX3D_CORE_TRACE("{0}", e);
+
+        BOX3D_CORE_TRACE("{0}", e);
+
+        for (auto it = m_layerStack.end(); it != m_layerStack.begin();)
+        {
+            (*--it)->OnEvent(e);
+            if (e.GetHandled())
+                break;
+        }
+
     }
 
     void Application::run()
@@ -56,7 +76,10 @@ namespace box3d {
         
             // glClearColor(1, 0, 1, 1);
             // glClear(GL_COLOR_BUFFER_BIT);
-           
+
+            for (Layer* layer : m_layerStack)
+                layer->OnUpdate();
+
             m_window->update();
         
         }

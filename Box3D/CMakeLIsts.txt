@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 set(This Box3D)
 
 set(HEADERS 
+    include/Box3D.hpp
     include/Box3D/Application.hpp
     include/Box3D/Core.hpp
     include/Box3D/EnteryPoint.hpp
@@ -12,12 +13,16 @@ set(HEADERS
     include/Box3D/Events/KeyEvent.hpp
     include/Box3D/Events/MouseEvent.hpp
     include/Box3D/Window.hpp
+    include/Box3D/Layer.hpp
+    include/Box3D/LayerStack.hpp
     include/Platform/Windows/WindowsWindow.hpp
 )
 
 set(SOURCES  
     src/Application.cpp
     src/Log.cpp
+    src/Layer.cpp
+    src/LayerStack.cpp
     src/WindowsWindow.cpp
 )
 

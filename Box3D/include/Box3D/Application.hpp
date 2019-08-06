@@ -13,10 +13,10 @@
 #include <MySQL/MySQL.hpp>
 
 #include "Events/Event.hpp"
-
-#include "Window.hpp"
-
 #include "Box3D/Events/ApplicationEvent.hpp"
+#include "Window.hpp"
+#include "Box3D/LayerStack.hpp"
+
 
     namespace box3d {
         
@@ -26,6 +26,8 @@
             Application();  
             virtual ~Application();
 
+            void PushLayer(Layer* layer);
+            void PushOverLayer(Layer* layer);
             /*
              * Window events
              */
@@ -51,6 +53,8 @@
             std::string password;
 
             std::unique_ptr<Window> m_window;
+
+            LayerStack m_layerStack;
 
         }; // class Application
 
