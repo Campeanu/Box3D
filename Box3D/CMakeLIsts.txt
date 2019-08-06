@@ -16,6 +16,8 @@ set(HEADERS
     include/Box3D/Layer.hpp
     include/Box3D/LayerStack.hpp
     include/Platform/Windows/WindowsWindow.hpp
+    include/Platform/OpenGL/imgui_impl_glfw.h
+    include/Platform/OpenGL/imgui_impl_opengl3.h
 )
 
 set(SOURCES  
@@ -24,6 +26,8 @@ set(SOURCES
     src/Layer.cpp
     src/LayerStack.cpp
     src/WindowsWindow.cpp
+    src/imgui_impl_glfw.cpp
+    src/imgui_impl_opengl3.cpp
 )
 
 # -------------------------------------------
@@ -47,6 +51,7 @@ add_compile_definitions(BOX3D_PLATFORM_WINDOW)
 add_compile_definitions(BOX3D_DEBUG)
 add_compile_definitions(GLEW_STATIC)
 add_compile_definitions(GLFW_INCLUDE_NONE)
+add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 
 # How to set an output path for an executable file  
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -67,7 +72,7 @@ target_link_libraries(${This} PUBLIC
     GLAD
     GLEW
     glfw
-#   ImGUI
+    ImGUI
     opengl32
 )
 

@@ -97,6 +97,8 @@ if(ParentDirectory STREQUAL "")
     )
     # OpenGl dependencies:
     add_subdirectory(Dependencies/OpenGL)
+    # ImGUI - GUI
+    add_subdirectory(Dependencies/GUI)
 
     # Specify where to find external libraries.
     # Example:
