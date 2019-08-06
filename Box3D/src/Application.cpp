@@ -21,6 +21,9 @@ namespace box3d {
 
     Application::Application()
     {
+        this->m_running = true;
+        this->m_window = std::unique_ptr<Window>(Window::create());
+
         if (this->checkForLogin())
         {
             this->getUserData();
@@ -36,13 +39,10 @@ namespace box3d {
     void Application::run()
     {
         
-        /**
-         * Test events
-         */
-        WindowResizeEvent e(1280, 720);
-        BOX3D_TRACE(e);
-
-        while(true);
+        while(this->m_running)
+        {
+            m_window->update();
+        }
     }
 
 } // namespace box3d

@@ -13,6 +13,10 @@
 
 #include "Events/Event.hpp"
 
+#include "Window.hpp"
+
+#include <memory>
+
     namespace box3d {
         
         class Application {
@@ -32,10 +36,14 @@
             bool checkForLogin();
             // Private properties
         private:
+            bool m_running;
+            
             Login* login;
 
             std::string mailusername;
             std::string password;
+
+            std::unique_ptr<Window> m_window;
 
         }; // class Application
 

@@ -30,6 +30,9 @@ link_directories(${mysql_connector}/lib64/vs14)
 # add_compile_definitions(difinition)
 # Example
 # add_compile_definitions(GLEW_STATIC)
+add_compile_definitions(BOX3D_PLATFORM_WINDOW)
+add_compile_definitions(BOX3D_DEBUG)
+add_compile_definitions(GLEW_STATIC)
 
 # Specify platform: 
 #   * BOX3D_PLATFORM_WINDOW

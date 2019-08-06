@@ -95,12 +95,18 @@ if(ParentDirectory STREQUAL "")
     set_target_properties(spdlog PROPERTIES
         FOLDER Libraries/spdlog
     )
-    
+    # OpenGl dependencies:
+    add_subdirectory(Dependencies/OpenGL)
+
     # Specify where to find external libraries.
     # Example:
     # set(Library "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/Library")
+    # boost:
     set(boost ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/boost)
+    # mysql_connector:
     set(mysql_connector ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/mysql_connector)
+    # glm:
+    set(glm ${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/OpenGL)
 
 endif(ParentDirectory STREQUAL "")
 # Add subdirectories directly in this repository.

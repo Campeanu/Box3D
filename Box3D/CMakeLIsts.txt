@@ -11,11 +11,14 @@ set(HEADERS
     include/Box3D/Events/Event.hpp
     include/Box3D/Events/KeyEvent.hpp
     include/Box3D/Events/MouseEvent.hpp
+    include/Box3D/Window.hpp
+    include/Platform/Windows/WindowsWindow.hpp
 )
 
 set(SOURCES  
     src/Application.cpp
     src/Log.cpp
+    src/WindowsWindow.cpp
 )
 
 # -------------------------------------------
@@ -24,7 +27,8 @@ set(SOURCES
 include_directories(${boost}/include)
 # MySQL:
 include_directories(${mysql_connector}/include/jdbc)
-
+# GLM:
+include_directories(${glm})
 
 # How to add a directory to link path: 
 # link_directories(${variable}/lib)
@@ -32,8 +36,11 @@ include_directories(${mysql_connector}/include/jdbc)
 
 # How to add compilation definitions:
 # add_compile_definitions(difinition)
-# Example:
-# add_compile_definitions(GLEW_STATIC)
+# Example: add_compile_definitions(GLEW_STATIC)
+# GLEW_STATIC: 
+add_compile_definitions(BOX3D_PLATFORM_WINDOW)
+add_compile_definitions(BOX3D_DEBUG)
+add_compile_definitions(GLEW_STATIC)
 
 # How to set an output path for an executable file  
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -51,11 +58,11 @@ target_link_libraries(${This} PUBLIC
     SystemAbstractions
     Json
     spdlog
-#   GLAD
+    GLAD
+    GLEW
+    glfw
 #   ImGUI
-#   GLEW
-#   glfw
-#   opengl32
+    opengl32
 )
 
 target_include_directories(${This} PUBLIC include)
