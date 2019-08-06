@@ -46,6 +46,7 @@ include_directories(${glm})
 add_compile_definitions(BOX3D_PLATFORM_WINDOW)
 add_compile_definitions(BOX3D_DEBUG)
 add_compile_definitions(GLEW_STATIC)
+add_compile_definitions(GLFW_INCLUDE_NONE)
 
 # How to set an output path for an executable file  
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)

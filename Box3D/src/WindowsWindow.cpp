@@ -4,6 +4,8 @@
 #include "Box3D/Events/KeyEvent.hpp"
 #include "Box3D/Events/MouseEvent.hpp"
 
+#include <GLAD/glad.h>
+
 namespace box3d {
 
     static bool s_GLFWInitialized = false;
@@ -40,7 +42,7 @@ namespace box3d {
         if(!s_GLFWInitialized)
         {
             int success = glfwInit();
-            BOX3D_CORE_ASSERT(success, "Could not initializate GLFW");
+            BOX3D_CORE_ASSERT(success, "Could not initializate GLFW!");
             glfwSetErrorCallback(GLFWErrorCallback);
             s_GLFWInitialized = true;
         }
@@ -48,6 +50,10 @@ namespace box3d {
         m_window = glfwCreateWindow((int)props.width, (int)props.height, props.title.c_str(), nullptr, nullptr);
         glfwMaximizeWindow(m_window);
         glfwMakeContextCurrent(m_window);
+
+        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        BOX3D_CORE_ASSERT(status, "Could not initializate GLAD!");
+
         glfwSetWindowUserPointer(m_window, &m_data);
         setVSync(true);
 
