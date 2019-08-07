@@ -61,12 +61,12 @@ namespace box3d {
     {
         while (m_Running)
         {
-        //    float time = (float)glfwGetTime();
-        //    Timestep timestep = time - m_LastFrameTime;
-        //    m_LastFrameTime = time;
-        //
-        //    for (Layer* layer : m_LayerStack)
-        //        layer->OnUpdate(timestep);
+            float time = (float)glfwGetTime();
+            Timestep timestep = time - m_LastFrameTime;
+            m_LastFrameTime = time;
+        
+            for (Layer* layer : m_LayerStack)
+                layer->OnUpdate(timestep);
 
             m_ImGuiLayer->Begin();
             for (Layer* layer : m_LayerStack)
@@ -74,9 +74,6 @@ namespace box3d {
             m_ImGuiLayer->End();
 
             m_Window->OnUpdate();
-
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
 
         }
     }

@@ -3,6 +3,7 @@
 
 #include "Box3D/Core.hpp"
 #include "Box3D/Events/Event.hpp"
+#include "Box3D/Core/Timestep.hpp"
 
 namespace box3d {
 
@@ -13,9 +14,9 @@ namespace box3d {
 
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void OnUpdate() {}
+        virtual void OnUpdate(Timestep ts) {}
         virtual void OnImGuiRender() {}
-        virtual void OnEvent(Event& event)  {}
+        virtual void OnEvent(Event& event) {}
 
         inline const std::string& GetName() const { return m_debugName; }
     protected:

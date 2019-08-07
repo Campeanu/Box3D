@@ -5,6 +5,7 @@ set(This Box3D)
 set(HEADERS 
     include/Box3D.hpp
     include/Box3D/Application.hpp
+    include/Box3D/Core/Timestep.hpp
     include/Box3D/Core.hpp
     include/Box3D/EnteryPoint.hpp
     include/Box3D/Log.hpp

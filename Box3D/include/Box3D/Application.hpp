@@ -17,6 +17,8 @@
 #include "Window.hpp"
 #include "Box3D/LayerStack.hpp"
 
+#include "Box3D/Core/Timestep.hpp"
+
 #include "Box3D/ImGUI/ImGuiLayer.hpp"
 
     namespace box3d {

@@ -153,6 +153,8 @@ namespace box3d {
 	{
 		glfwPollEvents();
         m_Context->SwapBuffers();
+
+        glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

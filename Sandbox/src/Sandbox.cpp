@@ -8,7 +8,7 @@ public:
 
     }
 
-    void OnUpdate() override
+    void OnUpdate(box3d::Timestep ts) override
     {
         BOX3D_INFO("ExampleLayer::Update");
     }
@@ -25,7 +25,7 @@ class Sandbox : public box3d::Application {
 public:
     Sandbox()
     {
-        // PushLayer(new ExampleLayer());
+        PushLayer(new ExampleLayer());
     }
 
     virtual ~Sandbox()
