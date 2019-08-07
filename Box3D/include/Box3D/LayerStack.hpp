@@ -9,24 +9,22 @@
 namespace box3d {
 
     class LayerStack {
-    public:
-        LayerStack();
-        ~LayerStack();
+	public:
+		LayerStack();
+		~LayerStack();
 
-        void PushLayer(Layer* layer);
-        void PushOverLayer(Layer* overlay);
+		void PushLayer  (Layer* layer);
+		void PushOverlay(Layer* overlay);
+		
+		void PopLayer  (Layer* layer);
+		void PopOverlay(Layer* overlay);
 
-        void PopLayer(Layer* layer);
-        void PopOverLayer(Layer* overlay);
-
-        std::vector<Layer*>::iterator begin () { return m_layers.begin(); }
-        std::vector<Layer*>::iterator end   () { return m_layers.end();   }
-
-    private:
-        std::vector<Layer*> m_layers;
-        std::vector<Layer*>::iterator m_layerInsert;
-
-    };
+		std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }
+		std::vector<Layer*>::iterator end()   { return m_Layers.end();   }
+	private:
+		std::vector<Layer*> m_Layers;
+		unsigned int m_LayerInsertIndex = 0;
+	};
 
 }
 

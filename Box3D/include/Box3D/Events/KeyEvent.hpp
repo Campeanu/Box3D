@@ -54,7 +54,6 @@ namespace box3d {
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:

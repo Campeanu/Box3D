@@ -3,43 +3,58 @@
 
 #include "Box3D/Window.hpp"
 
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+#include <GL/gl3w.h>    // Initialize with gl3wInit()
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+#include <GL/glew.h>    // Initialize with glewInit()
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+#include <glad/glad.h>  // Initialize with gladLoadGL()
+#else
+#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#endif
+
 #include <GLFW/glfw3.h>
+
+#include "Box3D/Renderer/GraphicsContext.hpp"
+#include "Box3D/Renderer/OpenGLContext.hpp"
 
 namespace box3d {
 
-    class WindowsWindow : public Window {
-    public: 
-        WindowsWindow(const WindowProps& props);
-        virtual ~WindowsWindow();
+	class WindowsWindow : public Window
+	{
+	public:
+		WindowsWindow(const WindowProps& props);
+		virtual ~WindowsWindow();
 
-        void update() override;
+		void OnUpdate() override;
 
-        inline unsigned int getWidth()  const override { return m_data.width;  };
-        inline unsigned int getHeight() const override { return m_data.height; };
-        
-        inline void setEventCallback(const EventCallbackFn& callback) override { m_data.EventCallback = callback; }
-        
-        void setVSync(bool enabled) override;
-        bool isVSync() const override;
+		inline unsigned int GetWidth() const override { return m_Data.Width; }
+		inline unsigned int GetHeight() const override { return m_Data.Height; }
 
-    private:
-        virtual void init(const WindowProps& props);
-        virtual void shutDown();
-    private:
-        GLFWwindow* m_window;
+		// Window attributes
+		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		void SetVSync(bool enabled) override;
+		bool IsVSync() const override;
 
-        struct WindowData {
-            std::string  title;
-            unsigned int width, height;
+		inline virtual void* GetNativeWindow() const { return m_Window; }
+	private:
+		virtual void Init(const WindowProps& props);
+		virtual void Shutdown();
+	private:
+		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
-            bool VSync;
+		struct WindowData
+		{
+			std::string Title;
+			unsigned int Width, Height;
+			bool VSync;
 
-            EventCallbackFn EventCallback;
-        };
+			EventCallbackFn EventCallback;
+		};
 
-        WindowData m_data;
-
-    };
+		WindowData m_Data;
+	};
 
 }
 

@@ -34,7 +34,7 @@ add_compile_definitions(BOX3D_PLATFORM_WINDOW)
 add_compile_definitions(BOX3D_DEBUG)
 add_compile_definitions(GLEW_STATIC)
 add_compile_definitions(GLFW_INCLUDE_NONE)
-add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 
 # Specify platform: 
 #   * BOX3D_PLATFORM_WINDOW

@@ -20,33 +20,12 @@ public:
 
 };
 
-class ExampleOverLayer : public box3d::Layer {
-public:
-    ExampleOverLayer()
-        : Layer("ExampleOverLayer")
-    {
-
-    }
-
-    void OnUpdate() override
-    {
-        BOX3D_INFO("ExampleOverLayer::Update");
-    }
-
-    void OnEvent(box3d::Event& event) override
-    {
-        BOX3D_TRACE("{0}", event);
-    }
-
-};
-
 class Sandbox : public box3d::Application {
     // Public methods
 public:
     Sandbox()
     {
-        PushLayer(new ExampleLayer());
-        PushOverLayer(new ExampleOverLayer());
+        // PushLayer(new ExampleLayer());
     }
 
     virtual ~Sandbox()

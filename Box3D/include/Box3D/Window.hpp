@@ -8,45 +8,42 @@
 
 namespace box3d {
 
-    struct WindowProps {
-        std::string  title;
-        unsigned int width;
-        unsigned int height;
+	struct WindowProps
+	{
+		std::string Title;
+		unsigned int Width;
+		unsigned int Height;
 
-        WindowProps(
-            const std::string& title = "Box3D", 
-            unsigned int width  = 1920,
-            unsigned int height = 1080
-        )
-            : title{title}, width{width}, height{height}
-        {
+		WindowProps(const std::string& title = "Box3D",
+			        unsigned int width = 1280,
+			        unsigned int height = 720)
+			: Title(title), Width(width), Height(height)
+		{
+		}
+	};
 
-        }
+	// Interface representing a desktop system based Window
+	class Window
+	{
+	public:
+		using EventCallbackFn = std::function<void(Event&)>;
 
-    };
+		virtual ~Window() = default;
 
-    class Window {
-    public:
-        using EventCallbackFn = std::function<void(Event&)>;
+		virtual void OnUpdate() = 0;
 
-        virtual ~Window()
-        {
+		virtual unsigned int GetWidth() const = 0;
+		virtual unsigned int GetHeight() const = 0;
 
-        }
+		// Window attributes
+		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void SetVSync(bool enabled) = 0;
+		virtual bool IsVSync() const = 0;
 
-        virtual void update() = 0;
+		virtual void* GetNativeWindow() const = 0;
 
-        virtual unsigned int getWidth()  const = 0;
-        virtual unsigned int getHeight() const = 0;
-
-        // Window atributes
-        virtual void setEventCallback(const EventCallbackFn& callback) = 0;
-        virtual void setVSync(bool enabled) = 0;
-        virtual bool isVSync() const = 0;
-
-        static Window* create(const WindowProps& props = WindowProps());
-
-    }; // Window
+		static Window* Create(const WindowProps& props = WindowProps());
+	};
 
 }
 

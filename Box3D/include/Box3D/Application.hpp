@@ -17,46 +17,37 @@
 #include "Window.hpp"
 #include "Box3D/LayerStack.hpp"
 
+#include "Box3D/ImGUI/ImGuiLayer.hpp"
 
     namespace box3d {
         
-        class Application {
-            // Public methods
+        class Application
+        {
         public:
-            Application();  
-            virtual ~Application();
+            Application();
+            virtual ~Application() = default;
 
-            void PushLayer(Layer* layer);
-            void PushOverLayer(Layer* layer);
-            /*
-             * Window events
-             */
+            void Run();
+
             void OnEvent(Event& e);
 
-            /**
-             * This function contain the main loop of our application
-             */
-            void run();
-            
-            // Private methods 
+            void PushLayer(Layer* layer);
+            void PushOverlay(Layer* layer);
+
+            inline Window& GetWindow() { return *m_Window; }
+
+            inline static Application& Get() { return *s_Instance; }
         private:
             bool OnWindowClose(WindowCloseEvent& e);
-            void Application::getUserData();
-            bool checkForLogin();
-            // Private properties
         private:
-            bool m_running;
-            
-            Login* login;
-
-            std::string mailusername;
-            std::string password;
-
-            std::unique_ptr<Window> m_window;
-
-            LayerStack m_layerStack;
-
-        }; // class Application
+            std::unique_ptr<Window> m_Window;
+            ImGuiLayer* m_ImGuiLayer;
+            bool m_Running = true;
+            LayerStack m_LayerStack;
+            float m_LastFrameTime = 0.0f;
+        private:
+            static Application* s_Instance;
+        };
 
         // To be defined in CLIENT
         Application* CreateApplication();

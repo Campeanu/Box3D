@@ -16,7 +16,7 @@
              */
 
             auto app = box3d::CreateApplication();
-            app->run();
+            app->Run();
             delete app;
         }
 

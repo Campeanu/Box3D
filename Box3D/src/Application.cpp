@@ -2,93 +2,88 @@
 
 #include "Box3D/Log.hpp"
 
-#include <glad/glad.h>
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+#include <GL/gl3w.h>    // Initialize with gl3wInit()
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+#include <GL/glew.h>    // Initialize with glewInit()
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+#include <glad/glad.h>  // Initialize with gladLoadGL()
+#else
+#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#endif
+
+#include <GLFW/glfw3.h>
 
 namespace box3d {
 
-    #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
-    void Application::getUserData()
-    {
-        std::cout << "Login ... \n";
-        std::cout << "[username/e-mail]: ";
-        std::cin >> this->mailusername;
-        std::cout << "[password]: ";
-        std::cin >> this->password;
-    }
+#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
-    bool Application::checkForLogin()
-    {
-        return false;
-    }
+    Application* Application::s_Instance = nullptr;
 
     Application::Application()
     {
-        this->m_running = true;
+        BOX3D_CORE_ASSERT(!s_Instance, "Application already exists!");
+        s_Instance = this;
 
-        this->m_window = std::unique_ptr<Window>(Window::create());
-        this->m_window->setEventCallback(BIND_EVENT_FN(OnEvent));
+        m_Window = std::unique_ptr<Window>(Window::Create());
+        m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-        if (this->checkForLogin())
-        {
-            this->getUserData();
-            this->login = new Login(sql::SQLString(this->mailusername.c_str()), sql::SQLString(this->password.c_str()));
-        }
-    } 
-        
-    Application::~Application()
-    {
-        // delete this->login;
+        m_ImGuiLayer = new ImGuiLayer();
+        PushOverlay(m_ImGuiLayer);
     }
 
     void Application::PushLayer(Layer* layer)
     {
-        m_layerStack.PushLayer(layer);
+        m_LayerStack.PushLayer(layer);
     }
 
-    void Application::PushOverLayer(Layer* layer)
+    void Application::PushOverlay(Layer* layer)
     {
-        m_layerStack.PushOverLayer(layer);
+        m_LayerStack.PushOverlay(layer);
     }
-
 
     void Application::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
-        BOX3D_CORE_TRACE("{0}", e);
-
-        for (auto it = m_layerStack.end(); it != m_layerStack.begin();)
+        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
         {
             (*--it)->OnEvent(e);
-            if (e.GetHandled())
+            if (e.Handled)
                 break;
         }
-
     }
 
-    void Application::run()
+    void Application::Run()
     {
-        
-        while(this->m_running)
+        while (m_Running)
         {
-        
-            glClearColor(1, 0, 1, 1);
+        //    float time = (float)glfwGetTime();
+        //    Timestep timestep = time - m_LastFrameTime;
+        //    m_LastFrameTime = time;
+        //
+        //    for (Layer* layer : m_LayerStack)
+        //        layer->OnUpdate(timestep);
+
+            m_ImGuiLayer->Begin();
+            for (Layer* layer : m_LayerStack)
+                layer->OnImGuiRender();
+            m_ImGuiLayer->End();
+
+            m_Window->OnUpdate();
+
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            for (Layer* layer : m_layerStack)
-                layer->OnUpdate();
-
-            m_window->update();
-        
         }
     }
 
     bool Application::OnWindowClose(WindowCloseEvent& e)
     {
-        this->m_running = false;
+        m_Running = false;
         return true;
     }
-
 } // namespace box3d

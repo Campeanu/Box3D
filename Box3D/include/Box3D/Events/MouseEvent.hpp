@@ -93,7 +93,6 @@ namespace box3d {
 
 		EVENT_CLASS_TYPE(MouseButtonReleased)
 	};
-
 }
 
 #endif // !__MOUSEEVENT_HPP_INCLUDED__
