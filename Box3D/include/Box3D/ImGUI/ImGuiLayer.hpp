@@ -22,10 +22,26 @@ namespace box3d {
         virtual void OnDetach() override;
         virtual void OnImGuiRender() override;
 
+
         void Begin();
         void End();
+
+        /*
+         * Private methods --->
+         */
+    private:
+        void DockSpace(bool enable);
+        void MainMenuBar(bool show);
+
+        void MenuFile();
+
     private:
         float m_Time = 0.0f;
+
+        bool show_demo_window;
+
+        bool dockspace_enabled;
+        bool show_mainmenubar;
     };
 
 }
