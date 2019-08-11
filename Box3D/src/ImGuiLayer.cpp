@@ -310,8 +310,8 @@ namespace box3d {
 
     void ImGuiLayer::OnImGuiRender()
     {
-        this->DockSpace(this->dockspace_enabled);
-        this->MainMenuBar(this->show_mainmenubar);
+        // this->DockSpace   (this->dockspace_enabled);
+        this->MainMenuBar (this->show_mainmenubar);
 
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
