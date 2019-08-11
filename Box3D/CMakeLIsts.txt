@@ -22,6 +22,7 @@ set(HEADERS
     include/Platform/OpenGL/imgui_impl_opengl3.h
     include/Box3D/Renderer/GraphicsContext.hpp
     include/Box3D/Renderer/OpenGLContext.hpp
+    include/Box3D/Renderer/Shader.hpp
 )
 
 set(SOURCES  
@@ -34,6 +35,7 @@ set(SOURCES
     src/imgui_impl_opengl3.cpp
     src/ImGuiLayer.cpp
     src/OpenGLContext.cpp
+    src/Shader.cpp
 )
 
 # -------------------------------------------

@@ -18,7 +18,8 @@ set(SOURCES
 include_directories(${boost}/include)
 # MySQL:
 include_directories(${mysql_connector}/include/jdbc)
-
+# GLM:
+include_directories(${glm})
 
 # -------------------------------------------
 # How to add a directory to link path: 

@@ -30,63 +30,6 @@ public:
             "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
             "}\n\0";
 
-        int  success;
-        char infoLog[512];
-
-        // Build and compile our shader program.
-        // -------------------------------------
-        // Vertex shader.
-        // --------------
-        int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-
-        glCompileShader(vertexShader);
-
-        // Check for shader compile errors.
-        // --------------------------------
-        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-        if (!success)
-        {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
-
-        // Fragment shader.
-        // ----------------
-        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-
-        glCompileShader(fragmentShader);
-
-        // Check for shader compile errors.
-        // --------------------------------
-        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-        if (!success)
-        {
-            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
-        // Link shaders.
-        // -------------
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-
-        glLinkProgram(shaderProgram);
-
-        // Check for linking errors.
-        // -------------------------
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-        }
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-
         // Set up vertex data (and buffer(s)) and configure vertex attributes.
         // -------------------------------------------------------------------
         float vertices[] = {
@@ -99,6 +42,8 @@ public:
             0, 1, 3,                // first Triangle
             1, 2, 3                 // second Triangle
         };
+
+        shaderProgram = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
 
         unsigned int VBO, EBO;
 
@@ -139,7 +84,7 @@ public:
     {
         // Draw our first triangle.
         // ------------------------
-        glUseProgram(shaderProgram);
+        shaderProgram->bind();
 
         // Seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized.
         // -------------------------------------------------------------------------------------------------------------------------------
@@ -162,7 +107,7 @@ public:
     }
     
 private:
-    int shaderProgram;
+    box3d::Shader* shaderProgram;
     unsigned int  VAO;
 };
 

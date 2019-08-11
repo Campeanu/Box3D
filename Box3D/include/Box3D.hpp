@@ -6,6 +6,8 @@
 
 #include "Box3D/ImGUI/ImGUILayer.hpp"
 
+#include "Box3D/Renderer/Shader.hpp"
+
 /**
  * ----------------- Entry point -----------------
  */
