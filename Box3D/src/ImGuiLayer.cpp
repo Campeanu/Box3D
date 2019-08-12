@@ -164,7 +164,7 @@ namespace box3d {
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("View"))
+            if (ImGui::BeginMenu("Assets"))
             {
                 if (ImGui::MenuItem("Test"))
                 {
@@ -174,7 +174,7 @@ namespace box3d {
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("Project"))
+            if (ImGui::BeginMenu("Objects"))
             {
                 if (ImGui::MenuItem("Test"))
                 {
@@ -184,47 +184,7 @@ namespace box3d {
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("Build"))
-            {
-                if (ImGui::MenuItem("Test"))
-                {
-
-                }
-
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Test"))
-            {
-                if (ImGui::MenuItem("Test"))
-                {
-
-                }
-
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Analyze"))
-            {
-                if (ImGui::MenuItem("Test"))
-                {
-
-                }
-
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Tools"))
-            {
-                if (ImGui::MenuItem("Test"))
-                {
-
-                }
-
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Extensions"))
+            if (ImGui::BeginMenu("Component"))
             {
                 if (ImGui::MenuItem("Test"))
                 {
@@ -250,6 +210,18 @@ namespace box3d {
 
                 ImGui::EndMenu();
             }
+
+            ImGui::SameLine(ImGui::GetWindowWidth() - 108);
+
+            if (ImGui::BeginMenu("User account"))
+            {
+                if (ImGui::MenuItem("Test"))
+                {
+
+                }
+                ImGui::EndMenu();
+            }
+
 
             ImGui::EndMainMenuBar();
         }
@@ -310,8 +282,8 @@ namespace box3d {
 
     void ImGuiLayer::OnImGuiRender()
     {
-        // this->DockSpace   (this->dockspace_enabled);
-        this->MainMenuBar (this->show_mainmenubar);
+        this->DockSpace   (this->dockspace_enabled);
+        this->MainMenuBar (this->show_mainmenubar );
 
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);

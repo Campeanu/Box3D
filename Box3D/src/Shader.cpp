@@ -66,7 +66,7 @@ namespace box3d {
             glDeleteShader(fragmentShader);
             
 			BOX3D_CORE_ERROR ("{0}", infoLog.data());
-			BOX3D_CORE_ASSERT(false, "Vertex shader compilation failure!");
+			BOX3D_CORE_ASSERT(false, "Fragment shader compilation failure!");
 			
             return;
         }
