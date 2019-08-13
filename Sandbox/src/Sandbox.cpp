@@ -26,17 +26,55 @@ public:
 
         const char* vertexShaderSource = "#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
+            "layout (location = 1) in vec3 aColor;\n"
+            "out vec3 ourColor;\n"
             "void main()\n"
             "{\n"
-            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+            "   gl_Position = vec4(aPos, 1.0);\n"
+            "   ourColor = aColor;\n"
             "}\0";
 
         const char* fragmentShaderSource = "#version 330 core\n"
             "out vec4 FragColor;\n"
+            "in vec3 ourColor;\n"
             "void main()\n"
             "{\n"
-            "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+            "   FragColor = vec4(ourColor, 1.0f);\n"
             "}\n\0";
+
+        this->shader = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
+        this->shader->bind();
+
+        // Set up vertex data (and buffer(s)) and configure vertex attributes.
+        // -------------------------------------------------------------------
+        float vertices[] {
+            // positions         // colors
+             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
+        };
+
+        unsigned int indices[] {
+            0, 1 , 2
+        };
+
+        this->vao = new box3d::VertexArray();
+        this->vbo = new box3d::VertexBuffer(vertices, 6 * 3 * sizeof(float));
+
+        this->layout = new box3d::VertexBufferLayout();
+        this->layout->push<float>(3);
+        this->layout->push<float>(3);
+
+        this->vao->AddBuffer(*this->vbo, *this->layout);
+
+        this->ebo = new box3d::IndexBuffer(indices, 3);
+
+        this->shader->unbind();
+        this->vao->unbind();
+        this->vbo->unbind();
+        this->ebo->unbind();
+
+        // --------------------------------------------------------------------------------------
 
         const char* vertexFrameBufferScreenShaderSource = "#version 330 core\n"
             "layout(location = 0) in vec2 aPos;\n"
@@ -58,23 +96,13 @@ public:
             "   FragColor = vec4(col, 1.0);\n"
             "}\0\n";
 
-        // Set up vertex data (and buffer(s)) and configure vertex attributes.
-        // -------------------------------------------------------------------
-        float vertices[] = {
-             0.5f,  0.5f, 0.0f,  // top right
-             0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left 
-        };
-
-        unsigned int indices[] = {  // note that we start from 0!
-            0, 1, 3,                // first Triangle
-            1, 2, 3                 // second Triangle
-        };
+        this->shaderScreen = new box3d::Shader(vertexFrameBufferScreenShaderSource, fragmentFrameBufferScreenShaderSource);
+        this->shaderScreen->bind();
+        this->shaderScreen->setInt("screenTexture", 0);
 
         // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
         // -------------------------------------------------------------------------------------------
-        float quadVertices[] = { 
+        float quadVertices[] = {
             // positions   // texCoords
             -1.0f,  1.0f,  0.0f, 1.0f,
             -1.0f, -1.0f,  0.0f, 0.0f,
@@ -85,60 +113,38 @@ public:
              1.0f,  1.0f,  1.0f, 1.0f
         };
 
-        shader = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
-        shaderScreen = new box3d::Shader(vertexFrameBufferScreenShaderSource, fragmentFrameBufferScreenShaderSource);
+        // QUAD buffers.
+        // -------------
+        this->quadvao = new box3d::VertexArray();
+        this->quadvbo = new box3d::VertexBuffer(quadVertices, 4 * 6 * sizeof(float));
 
-        unsigned int VBO, EBO;
+        this->quadlayout = new box3d::VertexBufferLayout();
+        this->layout->push<float>(2);
+        this->layout->push<float>(2);
 
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
+        this->quadvao->AddBuffer(*this->quadvbo, *this->quadlayout);
 
-        // Bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        // ----------------------------------------------------------------------------------------------------------------
-        glBindVertexArray(VAO);
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind.
-        // --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        // Remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-        // ----------------------------------------------------------------------------------------------------------------------------------
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        // -----------------------------------------
-
-        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-        // ----------------------------------------------------------------------------------------------------------------------------------
+        this->shaderScreen->unbind();
+        this->quadvao->unbind();
+        this->quadvbo->unbind();
+        
 
         // screen quad VAO
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-        glBindVertexArray(0);
-
+        // glGenVertexArrays(1, &quadVAO);
+        // glGenBuffers(1, &quadVBO);
+        // glBindVertexArray(quadVAO);
+        // glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        // glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        // glEnableVertexAttribArray(0);
+        // glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        // glEnableVertexAttribArray(1);
+        // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
         // Framebuffer configuration.
         // --------------------------
         glGenFramebuffers(1, &framebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
 
         // Create a color attachment texture
         // ---------------------------------
@@ -172,7 +178,21 @@ public:
         // ------------------
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // ------------------------------------------
-}
+    }
+
+    ~ApplicationLayer()
+    {
+        delete this->shader;
+        delete this->vao;
+        delete this->vbo;
+        delete this->ebo;
+        delete this->layout;
+
+        delete this->shaderScreen;
+        delete this->quadvao;
+        delete this->quadvbo;
+        delete this->quadlayout;
+    }
 
     void OnUpdate(box3d::Timestep ts) override
     {
@@ -193,11 +213,11 @@ public:
 
         // Draw our first triangle.
         // ------------------------
-        shader->bind();
+        this->shader->bind();
 
         // Seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized.
         // -------------------------------------------------------------------------------------------------------------------------------
-        glBindVertexArray(VAO);
+        this->vao->bind();
 
         // glDrawArrays(GL_TRIANGLES, 0, 6);
         // ---------------------------------
@@ -228,8 +248,8 @@ public:
 
         // Use the color attachment texture as the texture of the quad plane.
         // ------------------------------------------------------------------
-        shaderScreen->bind();
-        glBindVertexArray(quadVAO);
+        this->shaderScreen->bind();
+        this->quadvao->bind();
         glBindTexture (GL_TEXTURE_2D, textureColorbuffer);
         glDrawArrays  (GL_TRIANGLES, 0, 6);
 
@@ -254,9 +274,28 @@ public:
 private:
     void DrawMainScene()
     {
-        ImGui::Begin("Scene", NULL);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Image((void*)(intptr_t)textureColorbuffer, ImVec2(ImGui::GetWindowWidth() - 15, ImGui::GetWindowHeight() - 35));
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+        // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked).
+        // ------------------------------------------------------------------------------------------------------------------
+        ImGui::Begin("Scene", NULL);
+
+        // ImGui::Image((void*)(intptr_t)textureColorbuffer, ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()));
+        // -----------------------------------------------------------------------------------------------------------------------
+
+        ImVec2 pos = ImGui::GetCursorScreenPos();
+
+        ImGui::GetWindowDrawList()->AddImage (
+            (void*)(intptr_t)textureColorbuffer, ImVec2(ImGui::GetCursorScreenPos()),
+            ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()),
+            ImVec2(0, 1),
+            ImVec2(1, 0)
+        );
+
         ImGui::End();
+        ImGui::PopStyleVar();
+
     }
 
     void Hierarchy()
@@ -282,21 +321,39 @@ private:
         ImGui::Begin("Console", NULL);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
         ImGui::End();
     }
+
+    // Application properties.
+    // -----------------------
 private:
-
-    bool showScene;
-
-    box3d::Shader* shader;
-    box3d::Shader* shaderScreen;
-
-    unsigned int  VAO;
-
-    unsigned int framebuffer;
-    unsigned int textureColorbuffer;
-    unsigned int quadVAO, quadVBO;
-
     box3d::Application& app = box3d::Application::Get();
     GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+
+    // Darw data
+private:
+
+    // Triangle properties.
+    // --------------------
+    box3d::Shader* shader;
+    box3d::VertexArray*  vao;
+    box3d::IndexBuffer*  ebo;
+    box3d::VertexBuffer* vbo;
+    box3d::VertexBufferLayout* layout;
+
+    // Frame buffer proiperties.
+    // -------------------------
+    box3d::Shader* shaderScreen;
+    box3d::VertexArray*  quadvao;
+    box3d::VertexBuffer* quadvbo;
+    box3d::VertexBufferLayout* quadlayout;
+
+    // unsigned int quadVAO, quadVBO;
+    unsigned int framebuffer;
+    unsigned int textureColorbuffer;
+
+    // ImGui properties.
+    // -----------------
+private:
+    bool showScene;
 
 };
 
