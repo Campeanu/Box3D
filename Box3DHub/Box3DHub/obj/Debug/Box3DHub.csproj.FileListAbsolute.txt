@@ -1,0 +1,13 @@
+D:\workspace\Box3D\Box3DHub\Box3DHub\bin\Debug\Box3DHub.exe.config
+D:\workspace\Box3D\Box3DHub\Box3DHub\bin\Debug\Box3DHub.exe
+D:\workspace\Box3D\Box3DHub\Box3DHub\bin\Debug\Box3DHub.pdb
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Form1.resources
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Properties.Resources.resources
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.csproj.GenerateResource.cache
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.csproj.CoreCompileInputs.cache
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.exe
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.pdb
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Projects.resources
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Learn.resources
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.csprojAssemblyReference.cache
+D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.InstallControl.resources
