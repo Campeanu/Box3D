@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 set(This Box3D)
 
-set(HEADERS 
+set(HEADERS
     include/Box3D.hpp
     include/Box3D/Application.hpp
     include/Box3D/Core/Timestep.hpp
@@ -28,9 +28,11 @@ set(HEADERS
     include/Box3D/Renderer/VertexArray.hpp
     include/Box3D/Renderer/VertexBuffer.hpp
     include/Box3D/Renderer/VertexBufferLayout.hpp
+    include/Box3D/Renderer/RenderBufferObject.hpp
+    include/Box3D/Renderer/TextureBuffer.hpp
 )
 
-set(SOURCES  
+set(SOURCES
     src/Application.cpp
     src/Log.cpp
     src/Layer.cpp
@@ -46,10 +48,12 @@ set(SOURCES
     src/VertexArray.cpp
     src/VertexBuffer.cpp
     src/VertexBufferLayout.cpp
+    src/RenderBufferObject.cpp
+    src/TextureBuffer.cpp
 )
 
 # -------------------------------------------
-# How to add a directory to include path: 
+# How to add a directory to include path:
 # include_directories(${variable}/include)
 include_directories(${boost}/include)
 # MySQL:
@@ -57,21 +61,21 @@ include_directories(${mysql_connector}/include/jdbc)
 # GLM:
 include_directories(${glm})
 
-# How to add a directory to link path: 
+# How to add a directory to link path:
 # link_directories(${variable}/lib)
 # -------------------------------------------
 
 # How to add compilation definitions:
 # add_compile_definitions(difinition)
 # Example: add_compile_definitions(GLEW_STATIC)
-# GLEW_STATIC: 
+# GLEW_STATIC:
 add_compile_definitions(BOX3D_PLATFORM_WINDOW)
 add_compile_definitions(BOX3D_DEBUG)
 add_compile_definitions(GLEW_STATIC)
 add_compile_definitions(GLFW_INCLUDE_NONE)
 add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 
-# How to set an output path for an executable file  
+# How to set an output path for an executable file
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # library
@@ -96,7 +100,7 @@ target_link_libraries(${This} PUBLIC
 
 target_include_directories(${This} PUBLIC include)
 
-set_target_properties(${This} PROPERTIES 
+set_target_properties(${This} PROPERTIES
     FOLDER Libraries
 )
 
