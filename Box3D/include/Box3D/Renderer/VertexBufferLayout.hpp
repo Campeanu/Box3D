@@ -15,9 +15,9 @@
 #include <vector>
 
 namespace box3d {
-    
+
     struct VertexBufferElement {
-        
+
         unsigned int  type;
         unsigned int  count;
         unsigned char normalized;
@@ -39,7 +39,7 @@ namespace box3d {
     public:
         VertexBufferLayout();
         virtual ~VertexBufferLayout();
-        
+
         template<typename T>
         void push(unsigned int count)
         {

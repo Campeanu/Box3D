@@ -42,9 +42,9 @@ namespace Box3DHub
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.learn1 = new Box3DHub.Learn();
             this.projects1 = new Box3DHub.Projects();
             this.installControl1 = new Box3DHub.InstallControl();
+            this.learn1 = new Box3DHub.Learn();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -173,6 +173,7 @@ namespace Box3DHub
             this.button4.Size = new System.Drawing.Size(40, 20);
             this.button4.TabIndex = 2;
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.Button4_Click);
             // 
             // button5
             // 
@@ -208,13 +209,6 @@ namespace Box3DHub
             this.label1.TabIndex = 3;
             this.label1.Text = "   Box3D Hub 1.0.0.beta1";
             // 
-            // learn1
-            // 
-            this.learn1.Location = new System.Drawing.Point(200, 75);
-            this.learn1.Name = "learn1";
-            this.learn1.Size = new System.Drawing.Size(850, 575);
-            this.learn1.TabIndex = 5;
-            // 
             // projects1
             // 
             this.projects1.Location = new System.Drawing.Point(200, 75);
@@ -229,21 +223,28 @@ namespace Box3DHub
             this.installControl1.Size = new System.Drawing.Size(850, 575);
             this.installControl1.TabIndex = 6;
             // 
+            // learn1
+            // 
+            this.learn1.Location = new System.Drawing.Point(200, 75);
+            this.learn1.Name = "learn1";
+            this.learn1.Size = new System.Drawing.Size(850, 575);
+            this.learn1.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1050, 650);
-            this.Controls.Add(this.installControl1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.learn1);
             this.Controls.Add(this.projects1);
+            this.Controls.Add(this.installControl1);
+            this.Controls.Add(this.learn1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -152,5 +152,10 @@ namespace Box3DHub
             OnClickSidePanel.Top = button3.Top;
             installControl1.BringToFront();
         }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
     }
 }

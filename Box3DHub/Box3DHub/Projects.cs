@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Box3DHub
 {
@@ -15,6 +16,11 @@ namespace Box3DHub
         public Projects()
         {
             InitializeComponent();
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            Process.Start(@"C:\Box3D\Sandbox.exe");
         }
     }
 }
