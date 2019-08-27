@@ -30,6 +30,9 @@ set(HEADERS
     include/Box3D/Renderer/VertexBufferLayout.hpp
     include/Box3D/Renderer/RenderBufferObject.hpp
     include/Box3D/Renderer/TextureBuffer.hpp
+    include/Box3D/Renderer/EntityManager.hpp
+    include/Box3D/Renderer/Texture.hpp
+    include/Box3D/Renderer/stb_texture_loader/stb_image.h
 )
 
 set(SOURCES
@@ -50,6 +53,9 @@ set(SOURCES
     src/VertexBufferLayout.cpp
     src/RenderBufferObject.cpp
     src/TextureBuffer.cpp
+    src/EntityManager.cpp
+    src/Texture.cpp
+    src/stb_image.cpp
 )
 
 # -------------------------------------------

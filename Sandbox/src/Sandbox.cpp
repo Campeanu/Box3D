@@ -14,11 +14,11 @@
 
 #include "Box3D/Events/ApplicationEvent.hpp"
 
-#include <GLFW/glfw3.h>
+#include <Json/value.hpp>
+#include <SystemAbstractions/File.hpp>
+#include <SystemAbstractions/StringExtensions.hpp>
 
-#include "Box3D/Renderer/FrameBuffer.hpp"
-#include "Box3D/Renderer/TextureBuffer.hpp"
-#include "Box3D/Renderer/RenderBufferObject.hpp"
+#include <GLFW/glfw3.h>
 
 class ApplicationLayer : public box3d::Layer {
 public:
@@ -31,19 +31,26 @@ public:
         const char* vertexShaderSource = "#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
             "layout (location = 1) in vec3 aColor;\n"
+            "layout (location = 2) in vec2 aTexCoord;\n"
             "out vec3 ourColor;\n"
+            "out vec2 TexCoord;\n"
             "void main()\n"
             "{\n"
             "   gl_Position = vec4(aPos, 1.0);\n"
             "   ourColor = aColor;\n"
+            "	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
             "}\0";
 
         const char* fragmentShaderSource = "#version 330 core\n"
             "out vec4 FragColor;\n"
             "in vec3 ourColor;\n"
+            "in vec2 TexCoord;\n"
+            "uniform sampler2D texture1;\n"
+            "uniform sampler2D texture2;\n"
             "void main()\n"
             "{\n"
             "   FragColor = vec4(ourColor, 1.0f);\n"
+            "	FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);"
             "}\0\n";
 
         this->shader = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
@@ -52,26 +59,39 @@ public:
         // Set up vertex data (and buffer(s)) and configure vertex attributes.
         // -------------------------------------------------------------------
         float vertices[] {
-            // positions         // colors
-             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top
+             // positions         // colors           // texture coords
+             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,  // top right
+             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f   // top left
         };
 
         unsigned int indices[] {
-            0, 1 , 2
+            0, 1, 3, // first triangle
+            1, 2, 3  // second triangle
         };
 
         this->vao = new box3d::VertexArray();
-        this->vbo = new box3d::VertexBuffer(vertices, 6 * 3 * sizeof(float));
+        this->vbo = new box3d::VertexBuffer(vertices, 8 * 4 * sizeof(float));
 
         this->layout = new box3d::VertexBufferLayout();
         this->layout->push<float>(3);
         this->layout->push<float>(3);
+        this->layout->push<float>(2);
 
         this->vao->AddBuffer(*this->vbo, *this->layout);
 
-        this->ebo = new box3d::IndexBuffer(indices, 3);
+        this->ebo = new box3d::IndexBuffer(indices, 6);
+
+
+        this->container = new box3d::Texture("/Resources/textures/container.jpg");
+        this->container->createTexture(false);
+
+        this->awesomeface = new box3d::Texture("/Resources/textures/awesomeface.png");
+        this->awesomeface->createTexture(true);
+
+        this->shader->setInt("texture2", 1);
+
 
         this->shader->unbind();
         this->vao->unbind();
@@ -175,6 +195,9 @@ public:
         delete this->ebo;
         delete this->layout;
 
+        delete this->container;
+        delete this->awesomeface;
+
         delete this->frameBuffer;
         delete this->textureColorBuffer;
         delete this->rendererBufferObject;
@@ -206,6 +229,13 @@ public:
         // -- DRAW AREA --
         // ---------------
 
+        // -- Bind textures on corresponding texture units.
+        // ---------------------------------------------
+        glActiveTexture(GL_TEXTURE0);
+        this->container->bind();
+        glActiveTexture(GL_TEXTURE1);
+        this->awesomeface->bind();
+
         this->shader->bind();
         this->vao->bind();
 
@@ -221,13 +251,13 @@ public:
         // -----------------------------------------
         // -- DO NOT FOGOT TO SET THE glViewPort WITH ACTUALIZED DATA OF WINDOW !!!
         // -- Now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture.
-        // -------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------
         // -- Disable depth test so screen-space quad isn't discarded due to depth test.
-        // --------------------------------------------------------------------------
+        // -----------------------------------------------------------------------------
         // -- Clear all relevant buffers.
-        // ---------------------------
+        // ------------------------------
         // -- Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways).
-        // ----------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------
 
         this->frameBuffer->setGLViewPort(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
         this->frameBuffer->unbind();
@@ -324,10 +354,13 @@ private:
     // Triangle properties.
     // --------------------
     box3d::Shader* shader;
-    box3d::VertexArray*  vao;
-    box3d::IndexBuffer*  ebo;
+    box3d::VertexArray* vao;
+    box3d::IndexBuffer* ebo;
     box3d::VertexBuffer* vbo;
     box3d::VertexBufferLayout* layout;
+
+    box3d::Texture* container;
+    box3d::Texture* awesomeface;
 
     // Frame buffer.
     // -------------
