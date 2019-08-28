@@ -18,6 +18,10 @@
 #include <SystemAbstractions/File.hpp>
 #include <SystemAbstractions/StringExtensions.hpp>
 
+#include <windows.h>
+#include <Commdlg.h>
+#include <tchar.h>
+
 #include <GLFW/glfw3.h>
 
 class ApplicationLayer : public box3d::Layer {
@@ -84,12 +88,13 @@ public:
         this->ebo = new box3d::IndexBuffer(indices, 6);
 
 
-        this->container = new box3d::Texture("/Resources/textures/container.jpg");
+        this->container = new box3d::Texture((SystemAbstractions::File::GetExeParentDirectory() + "/Resources/textures/container.jpg"));
         this->container->createTexture(false);
 
-        this->awesomeface = new box3d::Texture("/Resources/textures/awesomeface.png");
+        this->awesomeface = new box3d::Texture((SystemAbstractions::File::GetExeParentDirectory() + "/Resources/textures/awesomeface.png"));
         this->awesomeface->createTexture(true);
 
+        this->shader->setInt("texture1", 0);
         this->shader->setInt("texture2", 1);
 
 
@@ -330,9 +335,41 @@ private:
         ImGui::End();
     }
 
+    void open_file()
+    {
+        OPENFILENAME ofn;       // common dialog box structure
+        TCHAR szFile[512] = {0};
+
+        ZeroMemory(&ofn, sizeof(OPENFILENAME));
+        ofn.lStructSize = sizeof(OPENFILENAME);
+
+        //ofn.hwndOwner = hwnd;
+        ofn.lpstrFile = szFile;
+
+        ofn.lpstrFile[0] = '\0';
+
+        ofn.nMaxFile = sizeof(szFile);
+        ofn.lpstrFilter = _T("All files\0*.*\0Text\0*.TXT\0");
+        ofn.nFilterIndex = 1;
+        ofn.lpstrFileTitle = NULL;
+        ofn.nMaxFileTitle = 0;
+        ofn.lpstrInitialDir = NULL;
+        ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+        if (GetOpenFileName(&ofn) > 0)
+        {
+            // MessageBox(NULL, ofn.lpstrFile, "", MB_OK);
+        }
+        else
+        {
+
+        }
+    }
+
     void Inspector()
     {
         ImGui::Begin("Inspector", NULL);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        if(ImGui::Button("Select texture")) this->open_file();
         ImGui::End();
     }
 

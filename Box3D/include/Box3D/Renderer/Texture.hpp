@@ -33,6 +33,9 @@ namespace box3d {
 
         void createTexture(bool typeformat);
 
+        void setPath(std::string path) { this->path = path; }
+        std::string setPath() { return this->path; }
+
         // Texture properties
     private:
         int width;
@@ -41,6 +44,9 @@ namespace box3d {
     private:
         unsigned int m_rendererID;
         unsigned char* data;
+
+        std::string path;
+
     };
 
 }; // box3d
