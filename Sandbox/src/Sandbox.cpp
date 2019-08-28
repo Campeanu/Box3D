@@ -18,6 +18,10 @@
 #include <SystemAbstractions/File.hpp>
 #include <SystemAbstractions/StringExtensions.hpp>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <GLFW/glfw3.h>
 
 class ApplicationLayer : public box3d::Layer {
@@ -30,27 +34,25 @@ public:
 
         const char* vertexShaderSource = "#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
-            "layout (location = 1) in vec3 aColor;\n"
-            "layout (location = 2) in vec2 aTexCoord;\n"
-            "out vec3 ourColor;\n"
+            "layout (location = 1) in vec2 aTexCoord;\n"
             "out vec2 TexCoord;\n"
+            "uniform mat4 model;\n"
+            "uniform mat4 view;\n"
+            "uniform mat4 projection;\n"
             "void main()\n"
             "{\n"
-            "   gl_Position = vec4(aPos, 1.0);\n"
-            "   ourColor = aColor;\n"
-            "	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
-            "}\0";
+            "    gl_Position = projection * view * model * vec4(aPos, 1.0f);\n"
+            "    TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);\n"
+            "}\0\n";
 
         const char* fragmentShaderSource = "#version 330 core\n"
             "out vec4 FragColor;\n"
-            "in vec3 ourColor;\n"
             "in vec2 TexCoord;\n"
             "uniform sampler2D texture1;\n"
             "uniform sampler2D texture2;\n"
             "void main()\n"
             "{\n"
-            "   FragColor = vec4(ourColor, 1.0f);\n"
-            "	FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);"
+            "   FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);\n"
             "}\0\n";
 
         this->shader = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
@@ -58,30 +60,66 @@ public:
 
         // Set up vertex data (and buffer(s)) and configure vertex attributes.
         // -------------------------------------------------------------------
-        float vertices[] {
-             // positions         // colors           // texture coords
-             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,  // top right
-             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f   // top left
+        float vertices[]
+        {
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         };
 
-        unsigned int indices[] {
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };
+        // unsigned int indices[] {
+        //     0, 1, 3, // first triangle
+        //     1, 2, 3  // second triangle
+        // };
 
         this->vao = new box3d::VertexArray();
-        this->vbo = new box3d::VertexBuffer(vertices, 8 * 4 * sizeof(float));
+        this->vbo = new box3d::VertexBuffer(vertices, 5 * 6 * 6 * sizeof(float));
 
         this->layout = new box3d::VertexBufferLayout();
-        this->layout->push<float>(3);
         this->layout->push<float>(3);
         this->layout->push<float>(2);
 
         this->vao->AddBuffer(*this->vbo, *this->layout);
 
-        this->ebo = new box3d::IndexBuffer(indices, 6);
+        // this->ebo = new box3d::IndexBuffer(indices, 6);
 
 
         this->container = new box3d::Texture("/Resources/textures/container.jpg");
@@ -90,13 +128,14 @@ public:
         this->awesomeface = new box3d::Texture("/Resources/textures/awesomeface.png");
         this->awesomeface->createTexture(true);
 
+        this->shader->setInt("texture1", 0);
         this->shader->setInt("texture2", 1);
 
 
         this->shader->unbind();
         this->vao->unbind();
         this->vbo->unbind();
-        this->ebo->unbind();
+        // this->ebo->unbind();
 
         // --------------------------------------------------------------------------------------
 
@@ -192,7 +231,7 @@ public:
         delete this->shader;
         delete this->vao;
         delete this->vbo;
-        delete this->ebo;
+        // delete this->ebo;
         delete this->layout;
 
         delete this->container;
@@ -237,9 +276,30 @@ public:
         this->awesomeface->bind();
 
         this->shader->bind();
+
+        // create transformations
+        glm::mat4 view          = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        glm::mat4 projection    = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(90.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+        view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        // pass transformation matrices to the shader
+        this->shader->setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+        this->shader->setMat4("view", view);
+
         this->vao->bind();
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            // calculate the model matrix for each object and pass it to shader before drawing
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            this->shader->setMat4("model", model);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
 
         this->vao->unbind();
 
@@ -355,12 +415,28 @@ private:
     // --------------------
     box3d::Shader* shader;
     box3d::VertexArray* vao;
-    box3d::IndexBuffer* ebo;
+    // box3d::IndexBuffer* ebo;
     box3d::VertexBuffer* vbo;
     box3d::VertexBufferLayout* layout;
 
     box3d::Texture* container;
     box3d::Texture* awesomeface;
+
+    // World space positions of our cubes
+    glm::vec3 cubePositions[11] = {
+
+        glm::vec3( 0.0f,  0.0f,  0.0f ),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f ),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+
+    };
 
     // Frame buffer.
     // -------------
