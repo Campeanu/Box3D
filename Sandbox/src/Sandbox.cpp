@@ -24,6 +24,72 @@
 
 #include <GLFW/glfw3.h>
 
+// camera
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
+
+bool  firstMouse = true;
+float yaw   = -90.0f;
+float pitch =  0.0f;
+float lastX =  800.0f / 2.0;
+float lastY =  600.0  / 2.0;
+float fov   =  90.0f;
+
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
+
+static void mouse_callback (
+    GLFWwindow* window,
+    double xpos, double ypos
+    )
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.1f; // change this value to your liking
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    // make sure that when pitch is out of bounds, screen doesn't get flipped
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 front;
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(front);
+}
+
+static void scroll_callback (
+    GLFWwindow* window,
+    double xoffset, double yoffset
+    )
+{
+    if (fov >= 1.0f && fov <= 90.0f)
+        fov -= yoffset;
+    if (fov <= 1.0f)
+        fov = 1.0f;
+    if (fov >= 90.0f)
+        fov = 90.0f;
+}
+
 class ApplicationLayer : public box3d::Layer {
 public:
     ApplicationLayer()
@@ -31,6 +97,9 @@ public:
     {
 
         this->showScene = true;
+
+        glfwSetCursorPosCallback(this->window, mouse_callback);
+        glfwSetScrollCallback(this->window, scroll_callback);
 
         const char* vertexShaderSource = "#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
@@ -54,6 +123,10 @@ public:
             "{\n"
             "   FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);\n"
             "}\0\n";
+
+        // configure global opengl state
+        // -----------------------------
+        glEnable(GL_DEPTH_TEST);
 
         this->shader = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
         this->shader->bind();
@@ -249,6 +322,15 @@ public:
 
     void OnUpdate(box3d::Timestep ts) override
     {
+
+        // per-frame time logic
+        // --------------------
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        this->processInput(this->window);
+
         // -----------------------------------------
         // -- DO NOT FOGOT TO SET THE glViewPort !!!
         // -----------------------------------------
@@ -277,13 +359,12 @@ public:
 
         this->shader->bind();
 
-        // create transformations
-        glm::mat4 view          = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        glm::mat4 projection    = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(90.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
-        view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        // pass transformation matrices to the shader
-        this->shader->setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+        // pass projection matrix to shader (note that in this case it could change every frame)
+        glm::mat4 projection = glm::perspective(glm::radians(fov), 1920.0f / 1080.0f, 0.1f, 100.0f);
+        this->shader->setMat4("projection", projection);
+
+        // camera/view transformation
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         this->shader->setMat4("view", view);
 
         this->vao->bind();
@@ -334,6 +415,19 @@ public:
 
         this->quadvao->unbind();
 
+    }
+
+    void processInput (GLFWwindow *window)
+    {
+        float cameraSpeed = 2.5 * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraFront;
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            cameraPos -= cameraSpeed * cameraFront;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     }
 
     virtual void OnImGuiRender() override
