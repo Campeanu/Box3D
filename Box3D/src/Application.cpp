@@ -31,7 +31,7 @@ namespace box3d {
         m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
         m_ImGuiLayer = new ImGuiLayer();
-        PushOverlay(m_ImGuiLayer);
+        PushLayer(m_ImGuiLayer);
     }
 
     void Application::PushLayer(Layer* layer)
@@ -64,7 +64,7 @@ namespace box3d {
             float time = (float)glfwGetTime();
             Timestep timestep = time - m_LastFrameTime;
             m_LastFrameTime = time;
-        
+
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate(timestep);
 

@@ -3,6 +3,7 @@
 namespace box3d {
 
     Texture::Texture(std::string path)
+        : path { path }
     {
         glGenTextures(1, &this->m_rendererID);
         glBindTexture(GL_TEXTURE_2D, this->m_rendererID);
@@ -16,7 +17,7 @@ namespace box3d {
         // load image, create texture and generate mipmaps
         stbi_set_flip_vertically_on_load(true);
 
-        this->data = stbi_load((SystemAbstractions::File::GetExeParentDirectory() + path).c_str(), &this->width, &this->height, &this->nrChannels, 0);
+        this->data = stbi_load(this->path.c_str(), &this->width, &this->height, &this->nrChannels, 0);
     }
 
     Texture::~Texture()
