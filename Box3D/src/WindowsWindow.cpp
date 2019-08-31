@@ -53,6 +53,7 @@ namespace box3d {
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		m_Context = new OpenGLContext(m_Window);
 		m_Context->Init();
+
         glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 		glfwMaximizeWindow(m_Window);
 
@@ -159,8 +160,6 @@ namespace box3d {
 	{
 		glfwPollEvents();
         m_Context->SwapBuffers();
-
-        glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
