@@ -24,6 +24,68 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Sandbox/SandboxScene.hpp"
+
+namespace TestScene {
+
+    // glfw: whenever the mouse moves, this callback is called
+    // -------------------------------------------------------
+
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    float lastX = (float)1920 / 2.0;
+    float lastY = (float)1080 / 2.0;
+    bool firstMouse = true;
+
+    // timing
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
+
+    void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+    {
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        float xoffset = 2 * (xpos - lastX);
+        float yoffset = 2 * (lastY - ypos); // reversed since y-coordinates go from bottom to top
+
+        lastX = xpos;
+        lastY = ypos;
+
+        camera.ProcessMouseMovement(xoffset, yoffset);
+    }
+
+    // glfw: whenever the mouse scroll wheel scrolls, this callback is called
+    // ----------------------------------------------------------------------
+    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+    {
+        camera.ProcessMouseScroll(yoffset);
+    }
+
+    // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+    // ---------------------------------------------------------------------------------------------------------
+    void processInput(GLFWwindow* window)
+    {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        else
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            camera.ProcessKeyboard(FORWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            camera.ProcessKeyboard(BACKWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            camera.ProcessKeyboard(LEFT, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            camera.ProcessKeyboard(RIGHT, deltaTime);
+    }
+
+}
+
 // camera
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -92,11 +154,10 @@ static void scroll_callback (
 
 class ApplicationLayer : public box3d::Layer {
 public:
-    ApplicationLayer()
-        : Layer("Example")
-    {
 
-        this->showScene = true;
+    void InitScene()
+    {
+       this->showScene = true;
 
         glfwSetCursorPosCallback(this->window, mouse_callback);
         glfwSetScrollCallback(this->window, scroll_callback);
@@ -299,30 +360,40 @@ public:
         // ---------------------------------------------
     }
 
-    ~ApplicationLayer()
+
+    ApplicationLayer()
+        : Layer("Example")
     {
-        delete this->shader;
-        delete this->vao;
-        delete this->vbo;
-        // delete this->ebo;
-        delete this->layout;
+        // this->InitScene();
 
-        delete this->container;
-        delete this->awesomeface;
+        glfwSetCursorPosCallback(window, TestScene::mouse_callback);
+        glfwSetScrollCallback(window, TestScene::scroll_callback);
+        this->testscene = new TestScene::SandBoxScene();
 
-        delete this->frameBuffer;
-        delete this->textureColorBuffer;
-        delete this->rendererBufferObject;
-
-        delete this->shaderScreen;
-        delete this->quadvao;
-        delete this->quadvbo;
-        delete this->quadlayout;
     }
 
-    void OnUpdate(box3d::Timestep ts) override
+    ~ApplicationLayer()
     {
+        // delete this->shader;
+        // delete this->vao;
+        // delete this->vbo;
+        // delete this->layout;
 
+        // delete this->container;
+        // delete this->awesomeface;
+
+        // delete this->frameBuffer;
+        // delete this->textureColorBuffer;
+        // delete this->rendererBufferObject;
+
+        // delete this->shaderScreen;
+        // delete this->quadvao;
+        // delete this->quadvbo;
+        // delete this->quadlayout;
+    }
+
+    void RenderScene()
+    {
         // per-frame time logic
         // --------------------
         float currentFrame = glfwGetTime();
@@ -417,6 +488,16 @@ public:
 
     }
 
+    void OnUpdate(box3d::Timestep ts) override
+    {
+        // this->RenderScene();
+        float currentFrame = glfwGetTime();
+        TestScene::deltaTime = currentFrame - TestScene::lastFrame;
+        TestScene::lastFrame = currentFrame;
+        TestScene::processInput(this->window);
+        this->testscene->RenderScene(TestScene::camera);
+    }
+
     void processInput (GLFWwindow *window)
     {
         float cameraSpeed = 2.5 * deltaTime;
@@ -461,7 +542,7 @@ private:
         ImVec2 pos = ImGui::GetCursorScreenPos();
 
         ImGui::GetWindowDrawList()->AddImage (
-            (void*)(intptr_t)this->textureColorBuffer->getRendererID(), ImVec2(ImGui::GetCursorScreenPos()),
+            (void*)(intptr_t)this->testscene->getTextureColorbuffer(), ImVec2(ImGui::GetCursorScreenPos()),
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()),
             ImVec2(0, 1),
             ImVec2(1, 0)
@@ -544,6 +625,8 @@ private:
     box3d::VertexArray*  quadvao;
     box3d::VertexBuffer* quadvbo;
     box3d::VertexBufferLayout* quadlayout;
+
+    TestScene::SandBoxScene* testscene;
 
     // -- ImGui properties.
     // --------------------

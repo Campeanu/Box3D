@@ -11,3 +11,5 @@ D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Projects.resources
 D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Learn.resources
 D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.csprojAssemblyReference.cache
 D:\workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.InstallControl.resources
+D:\Workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.Admin.resources
+D:\Workspace\Box3D\Box3DHub\Box3DHub\obj\Debug\Box3DHub.userlogin.resources
