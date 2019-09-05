@@ -12,7 +12,7 @@ set(CMAKE_C_STANDARD 17)
 # This variable is used to initialize the POSITION_INDEPENDENT_CODE property on all the targets.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Enables testing for this directory and below. 
+# Enables testing for this directory and below.
 enable_testing()
 
 # Store a property of directory scope in the named variable.
@@ -67,8 +67,8 @@ if(ParentDirectory STREQUAL "")
     set(CMAKE_DEBUG_POSTFIX "")
 
     # Suppress Microsoft warnings about functions being unsafe.
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)    
-    
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+
     # Google Test
     set(BUILD_GTEST ON  CACHE BOOL "Builds the googletest subproject" FORCE)
     set(BUILD_GMOCK OFF CACHE BOOL "Builds the googlemock subproject" FORCE)

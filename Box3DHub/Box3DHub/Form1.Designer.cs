@@ -43,11 +43,11 @@ namespace Box3DHub
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.userlogin1 = new Box3DHub.Userlogin();
             this.admin1 = new Box3DHub.Admin();
             this.projects1 = new Box3DHub.Projects();
             this.installControl1 = new Box3DHub.InstallControl();
             this.learn1 = new Box3DHub.Learn();
-            this.userlogin1 = new Box3DHub.Userlogin();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -230,6 +230,14 @@ namespace Box3DHub
             this.label1.TabIndex = 3;
             this.label1.Text = "   Box3D Hub 1.0.0.beta1";
             // 
+            // userlogin1
+            // 
+            this.userlogin1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.userlogin1.Location = new System.Drawing.Point(0, 25);
+            this.userlogin1.Name = "userlogin1";
+            this.userlogin1.Size = new System.Drawing.Size(1050, 625);
+            this.userlogin1.TabIndex = 8;
+            // 
             // admin1
             // 
             this.admin1.Location = new System.Drawing.Point(200, 75);
@@ -257,14 +265,6 @@ namespace Box3DHub
             this.learn1.Name = "learn1";
             this.learn1.Size = new System.Drawing.Size(850, 575);
             this.learn1.TabIndex = 5;
-            // 
-            // userlogin1
-            // 
-            this.userlogin1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.userlogin1.Location = new System.Drawing.Point(0, 25);
-            this.userlogin1.Name = "userlogin1";
-            this.userlogin1.Size = new System.Drawing.Size(1050, 625);
-            this.userlogin1.TabIndex = 8;
             // 
             // Form1
             // 

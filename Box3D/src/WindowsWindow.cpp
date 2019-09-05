@@ -18,6 +18,67 @@ namespace box3d {
         glViewport(0, 0, width, height);
     }
 
+
+    Json::Value WindowsWindow::getWindowSettings()
+    {
+        Json::Value configuration(Json::Value::Type::Object);
+
+        const auto configFile = std::shared_ptr<FILE>(
+            fopen(
+            (SystemAbstractions::File::GetExeParentDirectory() + "/Settings/windowprops.json").c_str(),
+                "rb"
+            ),
+            [](FILE* f) {
+                if (f != NULL) {
+                    (void)fclose(f);
+                }
+            }
+        );
+
+        if (configFile == NULL) {
+            return configuration;
+        }
+
+        if (fseek(configFile.get(), 0, SEEK_END)) {
+            fprintf(stderr, "error: unable to open configuration file\n");
+            return configuration;
+        }
+
+        const auto configSize = ftell(configFile.get());
+        if (configSize == EOF) {
+            fprintf(stderr, "error: unable to determen end of configuration file\n");
+            return configuration;
+        }
+
+        if (fseek(configFile.get(), 0, SEEK_SET) != 0) {
+            fprintf(stderr, "error: unable to seek to begining of configuration file\n");
+            return configuration;
+        }
+
+        const __int64 y = (__int64)configSize + 1;
+        std::vector<char> encodedConfig(y);
+
+        const auto readResult = fread(encodedConfig.data(), configSize, 1, configFile.get());
+
+        if (readResult != 1) {
+            fprintf(stderr, "error: unable read configuration file\n");
+            return configuration;
+        }
+
+        configuration = Json::Value::FromEncoding(encodedConfig.data());
+
+        return configuration;
+    }
+
+    void WindowsWindow::initWindowSettings()
+    {
+        const auto configurations = this->getWindowSettings();
+
+        if (configurations.Has("isfullscreen")) {
+            this->isfullscreen = (bool)configurations["isfullscreen"];
+        }
+    }
+
 	Window* Window::Create(const WindowProps& props)
 	{
 		return new WindowsWindow(props);
@@ -25,6 +86,7 @@ namespace box3d {
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+        this->initWindowSettings();
 		Init(props);
 	}
 
@@ -43,7 +105,6 @@ namespace box3d {
 
 		if (!s_GLFWInitialized)
 		{
-			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
 			BOX3D_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
@@ -55,7 +116,8 @@ namespace box3d {
 		m_Context->Init();
 
         glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
-		glfwMaximizeWindow(m_Window);
+        if(this->isfullscreen)
+            glfwMaximizeWindow(m_Window);
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);

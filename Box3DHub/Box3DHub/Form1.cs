@@ -121,6 +121,7 @@ namespace Box3DHub
         {
             m_aeroEnabled = false;
             InitializeComponent();
+
             OnClickSidePanel.Height = button1.Height;
             OnClickSidePanel.Top = button1.Top;
             userlogin1.Hide();

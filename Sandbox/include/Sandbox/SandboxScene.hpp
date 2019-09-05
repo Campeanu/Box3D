@@ -8,6 +8,9 @@
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
+#include <SystemAbstractions/File.hpp>
+#include <SystemAbstractions/StringExtensions.hpp>
+
 #include "Box3D/Renderer/stb_texture_loader/stb_image.h"
 
 #include <glm/glm.hpp>
@@ -34,8 +37,8 @@ namespace TestScene {
 
             // build and compile shaders
             // -------------------------
-            shader = new Shader (FileSystem::getPath("resources/5.1.framebuffers.vs").c_str(), FileSystem::getPath("resources/5.1.framebuffers.fs").c_str());
-            screenShader = new Shader(FileSystem::getPath("resources/5.1.framebuffers_screen.vs").c_str(), FileSystem::getPath("resources/5.1.framebuffers_screen.fs").c_str());
+            shader = new Shader ((SystemAbstractions::File::GetExeParentDirectory() + "/Resources/framebuffers.vs").c_str(), (SystemAbstractions::File::GetExeParentDirectory() + "/Resources/framebuffers.fs").c_str());
+            screenShader = new Shader((SystemAbstractions::File::GetExeParentDirectory() + "/Resources/framebuffers_screen.vs").c_str(), (SystemAbstractions::File::GetExeParentDirectory() + "/Resources/framebuffers_screen.fs").c_str());
 
             glGenVertexArrays(1, &cubeVAO);
             glGenBuffers(1, &cubeVBO);
@@ -69,8 +72,9 @@ namespace TestScene {
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-            this->cubeTexture = loadTexture(FileSystem::getPath("resources/textures/marble.jpg").c_str());
-            this->floorTexture = loadTexture(FileSystem::getPath("resources/textures/metal.png").c_str());
+
+            this->cubeTexture = loadTexture((SystemAbstractions::File::GetExeParentDirectory() + "/Resources/textures/marble.jpg").c_str());
+            this->floorTexture = loadTexture((SystemAbstractions::File::GetExeParentDirectory() + "/Resources/textures/metal.png").c_str());
             // shader configuration
             // --------------------
             shader->use();

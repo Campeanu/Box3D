@@ -18,6 +18,10 @@
 #include "Box3D/Renderer/GraphicsContext.hpp"
 #include "Box3D/Renderer/OpenGLContext.hpp"
 
+#include <Json/value.hpp>
+#include <SystemAbstractions/File.hpp>
+#include <SystemAbstractions/StringExtensions.hpp>
+
 namespace box3d {
 
 	class WindowsWindow : public Window
@@ -36,6 +40,9 @@ namespace box3d {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
+        Json::Value getWindowSettings();
+        void initWindowSettings();
+
 		inline virtual void* GetNativeWindow() const { return m_Window; }
 	private:
 		virtual void Init(const WindowProps& props);
@@ -52,6 +59,8 @@ namespace box3d {
 
 			EventCallbackFn EventCallback;
 		};
+
+        bool isfullscreen;
 
 		WindowData m_Data;
 	};
