@@ -22,16 +22,88 @@ namespace box3d {
 
     Application* Application::s_Instance = nullptr;
 
+    Json::Value Application::getProps()
+    {
+        Json::Value configuration(Json::Value::Type::Object);
+
+        const auto configFile = std::shared_ptr<FILE>(
+            fopen(
+            (SystemAbstractions::File::GetExeParentDirectory() + "/Settings/windowprops.json").c_str(),
+                "rb"
+            ),
+            [](FILE* f) {
+                if (f != NULL) {
+                    (void)fclose(f);
+                }
+            }
+        );
+
+        if (configFile == NULL) {
+            return configuration;
+        }
+
+        if (fseek(configFile.get(), 0, SEEK_END)) {
+            fprintf(stderr, "error: unable to open configuration file\n");
+            return configuration;
+        }
+
+        const auto configSize = ftell(configFile.get());
+        if (configSize == EOF) {
+            fprintf(stderr, "error: unable to determen end of configuration file\n");
+            return configuration;
+        }
+
+        if (fseek(configFile.get(), 0, SEEK_SET) != 0) {
+            fprintf(stderr, "error: unable to seek to begining of configuration file\n");
+            return configuration;
+        }
+
+        const __int64 y = (__int64)configSize + 1;
+        std::vector<char> encodedConfig(y);
+
+        const auto readResult = fread(encodedConfig.data(), configSize, 1, configFile.get());
+
+        if (readResult != 1) {
+            fprintf(stderr, "error: unable read configuration file\n");
+            return configuration;
+        }
+
+        configuration = Json::Value::FromEncoding(encodedConfig.data());
+
+        return configuration;
+    }
+
+    void Application::initProps()
+    {
+        const auto configurations = this->getProps();
+
+        if (configurations.Has("title")) {
+            this->title = (std::string)configurations["title"];
+        }
+
+        if (configurations.Has("width")) {
+            this->width = (int)configurations["width"];
+        }
+
+        if (configurations.Has("height")) {
+            this->height = (int)configurations["height"];
+        }
+    }
+
     Application::Application()
     {
         BOX3D_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
-        m_Window = std::unique_ptr<Window>(Window::Create());
+        this->initProps();
+
+        WindowProps windowprops(this->title, this->width,this->height);
+
+        m_Window = std::unique_ptr<Window>(Window::Create(windowprops));
         m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
         m_ImGuiLayer = new ImGuiLayer();
-        PushOverlay(m_ImGuiLayer);
+        PushLayer(m_ImGuiLayer);
     }
 
     void Application::PushLayer(Layer* layer)
@@ -64,7 +136,7 @@ namespace box3d {
             float time = (float)glfwGetTime();
             Timestep timestep = time - m_LastFrameTime;
             m_LastFrameTime = time;
-        
+
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate(timestep);
 

@@ -26,7 +26,7 @@ namespace box3d {
 	void OpenGLContext::Init()
 	{
 		glfwMakeContextCurrent(m_WindowHandle);
-		
+
         #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 			bool err = gl3wInit() != 0;
 		#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
@@ -37,6 +37,35 @@ namespace box3d {
 		#else
 			bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
 		#endif
+
+        /*
+         * ***************************************************
+         */
+
+        glShadeModel(GL_SMOOTH);                    // shading mathod: GL_SMOOTH or GL_FLAT
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);      // 4-byte pixel alignment
+
+        // enable /disable features
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_2D);
+
+        // track material ambient and diffuse from surface color, call it before glEnable(GL_COLOR_MATERIAL)
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_COLOR_MATERIAL);
+
+        glClearColor(0, 0, 0, 0);                   // background color
+        glClearStencil(0);                          // clear stencil buffer
+        glClearDepth(1.0f);                         // 0 is near, 1 is far
+        glDepthFunc(GL_LEQUAL);
+
+        /*
+         * ***************************************************
+         */
+
 
 		BOX3D_CORE_INFO("OpenGL Info:");
 		BOX3D_CORE_INFO("Vendor:   {0}", glGetString(GL_VENDOR));

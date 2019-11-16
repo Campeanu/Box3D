@@ -121,8 +121,10 @@ namespace Box3DHub
         {
             m_aeroEnabled = false;
             InitializeComponent();
+
             OnClickSidePanel.Height = button1.Height;
             OnClickSidePanel.Top = button1.Top;
+            userlogin1.Hide();
             projects1.BringToFront();
         }
 
@@ -152,10 +154,22 @@ namespace Box3DHub
             OnClickSidePanel.Top = button3.Top;
             installControl1.BringToFront();
         }
+        private void Button9_Click(object sender, EventArgs e)
+        {
+            OnClickSidePanel.Height = button9.Height;
+            OnClickSidePanel.Top = button9.Top;
+            admin1.BringToFront();
+        }
 
         private void Button4_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void Button8_Click(object sender, EventArgs e)
+        {
+            userlogin1.Show();
+            userlogin1.BringToFront();
         }
     }
 }

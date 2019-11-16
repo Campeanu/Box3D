@@ -16,6 +16,8 @@
 
 #include "Box3D/Renderer/stb_texture_loader/stb_image.h"
 
+#include <Box3D/Renderer/Camera.hpp>
+
 // -----------------------------------------------
 // ----------------- Entry point -----------------
 // -----------------------------------------------

@@ -2,16 +2,23 @@ cmake_minimum_required(VERSION 3.8)
 
 set(This Sandbox)
 
-# set(HEADERS 
-#     include/Sandbox/
-# )
+set(HEADERS
+    include/Sandbox/TestScene/camera.hpp
+    include/Sandbox/TestScene/filesystem.hpp
+    include/Sandbox/TestScene/mesh.hpp
+    include/Sandbox/TestScene/root_directory.hpp
+    include/Sandbox/TestScene/shader_m.hpp
+    include/Sandbox/TestScene/shader_s.hpp
+    include/Sandbox/TestScene/shader.hpp
+    include/Sandbox/SandboxScene.hpp
+)
 
 set(SOURCES
     src/Sandbox.cpp
 )
 
 # -------------------------------------------
-# How to add a directory to include path: 
+# How to add a directory to include path:
 # include_directories(${variable}/include)
 # -------------------------------------------
 # Boost:
@@ -22,7 +29,7 @@ include_directories(${mysql_connector}/include/jdbc)
 include_directories(${glm})
 
 # -------------------------------------------
-# How to add a directory to link path: 
+# How to add a directory to link path:
 # link_directories(${variable}/lib)
 # -------------------------------------------
 link_directories(${mysql_connector}/lib64/vs14)
@@ -37,18 +44,18 @@ add_compile_definitions(GLEW_STATIC)
 add_compile_definitions(GLFW_INCLUDE_NONE)
 add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 
-# Specify platform: 
+# Specify platform:
 #   * BOX3D_PLATFORM_WINDOW
 #   * BOX3D_PLATFORM_MACOSX
 #   * BOX3D_PLATFORM_LINUX
 add_compile_definitions(BOX3D_PLATFORM_WINDOW)
 
-# How to set an output path for an executable file  
+# How to set an output path for an executable file
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # library
 # add_library(${This} STATIC ${SOURCES} ${HEADERS})
-add_executable(${This} ${SOURCES})
+add_executable(${This} ${SOURCES} ${HEADERS})
 
 # ---------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------
@@ -69,7 +76,7 @@ target_link_libraries(${This} PRIVATE
 # ------------------------------------------------ PRIVATE ------------------------------------------------
 target_include_directories(${This} PRIVATE include)
 
-set_target_properties(${This} PROPERTIES 
+set_target_properties(${This} PROPERTIES
     FOLDER Applications
 )
 

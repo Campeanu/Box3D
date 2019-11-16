@@ -1,7 +1,7 @@
 #include <MySQL/MySQL.hpp>
 
 namespace mysql {
-    
+
     void MySQL::CreateConnection(const sql::SQLString& db_host, const sql::SQLString& db_user, const sql::SQLString& db_pass, const sql::SQLString& db_name)
     {
         try {
@@ -9,7 +9,7 @@ namespace mysql {
             this->driver = get_driver_instance();
             this->conn = driver->connect(db_host, db_user, db_pass);
             this->conn->setSchema(db_name);
-        
+
         } catch(sql::SQLException& e) {
 
             std::cout << "# ERR: SQLException in " << __FILE__;
@@ -36,7 +36,7 @@ namespace mysql {
         delete this->pstmt;
         delete this->res;
     }
-    
+
     void MySQL::mysql_stmt_execute(const sql::SQLString& sql)
     {
         this->stmt->execute(sql);
@@ -54,7 +54,7 @@ namespace mysql {
 
     void MySQL::mysql_stmt_bind_param(int placeholder, const sql::SQLString& value)
     {
-        this->pstmt->setString(placeholder, value);    
+        this->pstmt->setString(placeholder, value);
     }
 
     void MySQL::mysql_pstmt_execute()
@@ -64,20 +64,20 @@ namespace mysql {
 
     void MySQL::mysql_print_retrieve_data(const sql::SQLString& sql, const sql::SQLString& colname)
     {
-        this->res = this->stmt->executeQuery(sql);     
+        this->res = this->stmt->executeQuery(sql);
         while (res->next()) {
-            std::cout << res->getString(colname).c_str() << std::endl;    
+            std::cout << res->getString(colname).c_str() << std::endl;
         }
     }
 
     sql::SQLString MySQL::mysql_get_retrieve_data(const sql::SQLString& sql, const sql::SQLString& colname)
     {
-        this->res = this->stmt->executeQuery(sql);     
+        this->res = this->stmt->executeQuery(sql);
         sql::SQLString data;
 
         while (res->next()) {
             data = res->getString(colname).c_str();
-            // std::cout << res->getString(colname).c_str() << std::endl;    
+            // std::cout << res->getString(colname).c_str() << std::endl;
         }
 
         return data;

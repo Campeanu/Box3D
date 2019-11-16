@@ -22,7 +22,7 @@
 #include "Box3D/ImGUI/ImGuiLayer.hpp"
 
     namespace box3d {
-        
+
         class Application
         {
         public:
@@ -38,6 +38,9 @@
 
             inline Window& GetWindow() { return *m_Window; }
 
+            Json::Value getProps();
+            void initProps();
+
             inline static Application& Get() { return *s_Instance; }
         private:
             bool OnWindowClose(WindowCloseEvent& e);
@@ -49,6 +52,10 @@
             float m_LastFrameTime = 0.0f;
         private:
             static Application* s_Instance;
+
+            std::string title;
+            unsigned int width;
+            unsigned int height;
         };
 
         // To be defined in CLIENT

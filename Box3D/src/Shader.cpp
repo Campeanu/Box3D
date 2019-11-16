@@ -10,7 +10,7 @@ namespace box3d {
 
         // Build and compile our shader program.
         // -------------------------------------
-       
+
         // Vertex shader.
         // --------------
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -37,13 +37,13 @@ namespace box3d {
 
 			BOX3D_CORE_ERROR ("{0}", infoLog.data());
 			BOX3D_CORE_ASSERT(false, "Vertex shader compilation failure!");
-			
+
             return;
 		}
 
         // Fragment shader.
         // ----------------
-        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); 
+        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         source = fragmentShaderSource.c_str();
         glShaderSource(fragmentShader, 1, &source, 0);
         glCompileShader(fragmentShader);
@@ -64,10 +64,10 @@ namespace box3d {
             // We don't need the shader anymore.
             // ---------------------------------
             glDeleteShader(fragmentShader);
-            
+
 			BOX3D_CORE_ERROR ("{0}", infoLog.data());
 			BOX3D_CORE_ASSERT(false, "Fragment shader compilation failure!");
-			
+
             return;
         }
 
@@ -82,7 +82,7 @@ namespace box3d {
         // ---------------------
 
         this->m_rendererID = glCreateProgram();
-        int program = this->m_rendererID; 
+        int program = this->m_rendererID;
 
         // Attach shader to our program.
         // -----------------------------
@@ -93,9 +93,9 @@ namespace box3d {
         // Link our program.
         // -----------------
         glLinkProgram(program);
-		
+
         int isLinked = 0;
-        
+
         // Check for program link errors.
         // --------------------------------
         glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
@@ -124,85 +124,90 @@ namespace box3d {
         glDetachShader(program, vertexShader);
 		glDetachShader(program, fragmentShader);
     }
-    
+
     Shader::~Shader()
     {
-        glDeleteProgram(this->m_rendererID);       
+        glDeleteProgram(this->m_rendererID);
     }
-    
+
     void Shader::bind() const
     {
         glUseProgram(this->m_rendererID);
     }
 
-    void Shader::unbind() const 
+    void Shader::unbind() const
     {
         glUseProgram(0);
     }
 
-    // Utility uniform functions.
-  
-    // --------------------------
-    void Shader::setBool(const std::string &name, bool value) const
-    {         
-        glUniform1i(glGetUniformLocation(this->m_rendererID, name.c_str()), (int)value); 
+    uint32_t Shader::getm_RendererID() const
+    {
+        return this->m_rendererID;
     }
-  
+
+    // Utility uniform functions.
+    // --------------------------
+
+    void Shader::setBool(const std::string &name, bool value) const
+    {
+        glUniform1i(glGetUniformLocation(this->m_rendererID, name.c_str()), (int)value);
+    }
+
     // ------------------------------------------------------------------------
     void Shader::setInt(const std::string &name, int value) const
-    { 
-        glUniform1i(glGetUniformLocation(this->m_rendererID, name.c_str()), value); 
+    {
+        glUniform1i(glGetUniformLocation(this->m_rendererID, name.c_str()), value);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setFloat(const std::string &name, float value) const
-    { 
-        glUniform1f(glGetUniformLocation(this->m_rendererID, name.c_str()), value); 
+    {
+        glUniform1f(glGetUniformLocation(this->m_rendererID, name.c_str()), value);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setVec2(const std::string &name, const glm::vec2 &value) const
-    { 
-        glUniform2fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, &value[0]); 
+    {
+        glUniform2fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, &value[0]);
     }
-  
+
     void Shader::setVec2(const std::string &name, float x, float y) const
-    { 
-        glUniform2f(glGetUniformLocation(this->m_rendererID, name.c_str()), x, y); 
+    {
+        glUniform2f(glGetUniformLocation(this->m_rendererID, name.c_str()), x, y);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
-    { 
-        glUniform3fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, &value[0]); 
+    {
+        glUniform3fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, &value[0]);
     }
     void Shader::setVec3(const std::string &name, float x, float y, float z) const
-    { 
-        glUniform3f(glGetUniformLocation(this->m_rendererID, name.c_str()), x, y, z); 
+    {
+        glUniform3f(glGetUniformLocation(this->m_rendererID, name.c_str()), x, y, z);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setVec4(const std::string &name, const glm::vec4 &value) const
-    { 
-        glUniform4fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, &value[0]); 
+    {
+        glUniform4fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, &value[0]);
     }
-    void Shader::setVec4(const std::string &name, float x, float y, float z, float w) 
-    { 
-        glUniform4f(glGetUniformLocation(this->m_rendererID, name.c_str()), x, y, z, w); 
+    void Shader::setVec4(const std::string &name, float x, float y, float z, float w)
+    {
+        glUniform4f(glGetUniformLocation(this->m_rendererID, name.c_str()), x, y, z, w);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setMat2(const std::string &name, const glm::mat2 &mat) const
     {
         glUniformMatrix2fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setMat3(const std::string &name, const glm::mat3 &mat) const
     {
         glUniformMatrix3fv(glGetUniformLocation(this->m_rendererID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
-  
+
     // ------------------------------------------------------------------------
     void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
     {

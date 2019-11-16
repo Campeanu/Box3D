@@ -18,70 +18,242 @@
 #include <SystemAbstractions/File.hpp>
 #include <SystemAbstractions/StringExtensions.hpp>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <GLFW/glfw3.h>
+
+#include "Sandbox/SandboxScene.hpp"
+
+namespace TestScene {
+
+    // glfw: whenever the mouse moves, this callback is called
+    // -------------------------------------------------------
+
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    float lastX = (float)1920 / 2.0;
+    float lastY = (float)1080 / 2.0;
+    bool firstMouse = true;
+
+    // timing
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
+
+    void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+    {
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        float xoffset = 2 * (xpos - lastX);
+        float yoffset = 2 * (lastY - ypos); // reversed since y-coordinates go from bottom to top
+
+        lastX = xpos;
+        lastY = ypos;
+
+        camera.ProcessMouseMovement(xoffset, yoffset);
+    }
+
+    // glfw: whenever the mouse scroll wheel scrolls, this callback is called
+    // ----------------------------------------------------------------------
+    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+    {
+        camera.ProcessMouseScroll(yoffset);
+    }
+
+    // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+    // ---------------------------------------------------------------------------------------------------------
+    void processInput(GLFWwindow* window)
+    {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        else
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            camera.ProcessKeyboard(FORWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            camera.ProcessKeyboard(BACKWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            camera.ProcessKeyboard(LEFT, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            camera.ProcessKeyboard(RIGHT, deltaTime);
+    }
+
+}
+
+// camera
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
+
+bool  firstMouse = true;
+float yaw   = -90.0f;
+float pitch =  0.0f;
+float lastX =  800.0f / 2.0;
+float lastY =  600.0  / 2.0;
+float fov   =  90.0f;
+
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
+
+static void mouse_callback (
+    GLFWwindow* window,
+    double xpos, double ypos
+    )
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.3f; // change this value to your liking
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    // make sure that when pitch is out of bounds, screen doesn't get flipped
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 front;
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(front);
+}
+
+static void scroll_callback (
+    GLFWwindow* window,
+    double xoffset, double yoffset
+    )
+{
+    if (fov >= 1.0f && fov <= 90.0f)
+        fov -= yoffset;
+    if (fov <= 1.0f)
+        fov = 1.0f;
+    if (fov >= 90.0f)
+        fov = 90.0f;
+}
 
 class ApplicationLayer : public box3d::Layer {
 public:
-    ApplicationLayer()
-        : Layer("Example")
-    {
 
-        this->showScene = true;
+    void InitScene()
+    {
+       this->showScene = true;
+
+        glfwSetCursorPosCallback(this->window, mouse_callback);
+        glfwSetScrollCallback(this->window, scroll_callback);
 
         const char* vertexShaderSource = "#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
-            "layout (location = 1) in vec3 aColor;\n"
-            "layout (location = 2) in vec2 aTexCoord;\n"
-            "out vec3 ourColor;\n"
+            "layout (location = 1) in vec2 aTexCoord;\n"
             "out vec2 TexCoord;\n"
+            "uniform mat4 model;\n"
+            "uniform mat4 view;\n"
+            "uniform mat4 projection;\n"
             "void main()\n"
             "{\n"
-            "   gl_Position = vec4(aPos, 1.0);\n"
-            "   ourColor = aColor;\n"
-            "	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
-            "}\0";
+            "    gl_Position = projection * view * model * vec4(aPos, 1.0f);\n"
+            "    TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);\n"
+            "}\0\n";
 
         const char* fragmentShaderSource = "#version 330 core\n"
             "out vec4 FragColor;\n"
-            "in vec3 ourColor;\n"
             "in vec2 TexCoord;\n"
             "uniform sampler2D texture1;\n"
             "uniform sampler2D texture2;\n"
             "void main()\n"
             "{\n"
-            "   FragColor = vec4(ourColor, 1.0f);\n"
-            "	FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);"
+            "   FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);\n"
             "}\0\n";
+
+        // configure global opengl state
+        // -----------------------------
+        glEnable(GL_DEPTH_TEST);
 
         this->shader = new box3d::Shader(vertexShaderSource, fragmentShaderSource);
         this->shader->bind();
 
         // Set up vertex data (and buffer(s)) and configure vertex attributes.
         // -------------------------------------------------------------------
-        float vertices[] {
-             // positions         // colors           // texture coords
-             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,  // top right
-             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f   // top left
+        float vertices[]
+        {
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         };
 
-        unsigned int indices[] {
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };
+        // unsigned int indices[] {
+        //     0, 1, 3, // first triangle
+        //     1, 2, 3  // second triangle
+        // };
 
         this->vao = new box3d::VertexArray();
-        this->vbo = new box3d::VertexBuffer(vertices, 8 * 4 * sizeof(float));
+        this->vbo = new box3d::VertexBuffer(vertices, 5 * 6 * 6 * sizeof(float));
 
         this->layout = new box3d::VertexBufferLayout();
-        this->layout->push<float>(3);
         this->layout->push<float>(3);
         this->layout->push<float>(2);
 
         this->vao->AddBuffer(*this->vbo, *this->layout);
 
-        this->ebo = new box3d::IndexBuffer(indices, 6);
+        // this->ebo = new box3d::IndexBuffer(indices, 6);
 
 
         this->container = new box3d::Texture("/Resources/textures/container.jpg");
@@ -90,13 +262,14 @@ public:
         this->awesomeface = new box3d::Texture("/Resources/textures/awesomeface.png");
         this->awesomeface->createTexture(true);
 
+        this->shader->setInt("texture1", 0);
         this->shader->setInt("texture2", 1);
 
 
         this->shader->unbind();
         this->vao->unbind();
         this->vbo->unbind();
-        this->ebo->unbind();
+        // this->ebo->unbind();
 
         // --------------------------------------------------------------------------------------
 
@@ -187,29 +360,48 @@ public:
         // ---------------------------------------------
     }
 
-    ~ApplicationLayer()
+
+    ApplicationLayer()
+        : Layer("Example")
     {
-        delete this->shader;
-        delete this->vao;
-        delete this->vbo;
-        delete this->ebo;
-        delete this->layout;
+        // this->InitScene();
 
-        delete this->container;
-        delete this->awesomeface;
+        glfwSetCursorPosCallback(window, TestScene::mouse_callback);
+        glfwSetScrollCallback(window, TestScene::scroll_callback);
+        this->testscene = new TestScene::SandBoxScene();
 
-        delete this->frameBuffer;
-        delete this->textureColorBuffer;
-        delete this->rendererBufferObject;
-
-        delete this->shaderScreen;
-        delete this->quadvao;
-        delete this->quadvbo;
-        delete this->quadlayout;
     }
 
-    void OnUpdate(box3d::Timestep ts) override
+    ~ApplicationLayer()
     {
+        // delete this->shader;
+        // delete this->vao;
+        // delete this->vbo;
+        // delete this->layout;
+
+        // delete this->container;
+        // delete this->awesomeface;
+
+        // delete this->frameBuffer;
+        // delete this->textureColorBuffer;
+        // delete this->rendererBufferObject;
+
+        // delete this->shaderScreen;
+        // delete this->quadvao;
+        // delete this->quadvbo;
+        // delete this->quadlayout;
+    }
+
+    void RenderScene()
+    {
+        // per-frame time logic
+        // --------------------
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        this->processInput(this->window);
+
         // -----------------------------------------
         // -- DO NOT FOGOT TO SET THE glViewPort !!!
         // -----------------------------------------
@@ -237,9 +429,29 @@ public:
         this->awesomeface->bind();
 
         this->shader->bind();
+
+        // pass projection matrix to shader (note that in this case it could change every frame)
+        glm::mat4 projection = glm::perspective(glm::radians(fov), 1920.0f / 1080.0f, 0.1f, 100.0f);
+        this->shader->setMat4("projection", projection);
+
+        // camera/view transformation
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        this->shader->setMat4("view", view);
+
         this->vao->bind();
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            // calculate the model matrix for each object and pass it to shader before drawing
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            this->shader->setMat4("model", model);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
 
         this->vao->unbind();
 
@@ -276,6 +488,29 @@ public:
 
     }
 
+    void OnUpdate(box3d::Timestep ts) override
+    {
+        // this->RenderScene();
+        float currentFrame = glfwGetTime();
+        TestScene::deltaTime = currentFrame - TestScene::lastFrame;
+        TestScene::lastFrame = currentFrame;
+        TestScene::processInput(this->window);
+        this->testscene->RenderScene(TestScene::camera);
+    }
+
+    void processInput (GLFWwindow *window)
+    {
+        float cameraSpeed = 2.5 * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraFront;
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            cameraPos -= cameraSpeed * cameraFront;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    }
+
     virtual void OnImGuiRender() override
     {
         this->DrawMainScene();
@@ -307,7 +542,7 @@ private:
         ImVec2 pos = ImGui::GetCursorScreenPos();
 
         ImGui::GetWindowDrawList()->AddImage (
-            (void*)(intptr_t)this->textureColorBuffer->getRendererID(), ImVec2(ImGui::GetCursorScreenPos()),
+            (void*)(intptr_t)this->testscene->getTextureColorbuffer(), ImVec2(ImGui::GetCursorScreenPos()),
             ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth(), ImGui::GetCursorScreenPos().y + ImGui::GetWindowHeight()),
             ImVec2(0, 1),
             ImVec2(1, 0)
@@ -355,12 +590,28 @@ private:
     // --------------------
     box3d::Shader* shader;
     box3d::VertexArray* vao;
-    box3d::IndexBuffer* ebo;
+    // box3d::IndexBuffer* ebo;
     box3d::VertexBuffer* vbo;
     box3d::VertexBufferLayout* layout;
 
     box3d::Texture* container;
     box3d::Texture* awesomeface;
+
+    // World space positions of our cubes
+    glm::vec3 cubePositions[11] = {
+
+        glm::vec3( 0.0f,  0.0f,  0.0f ),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f ),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+
+    };
 
     // Frame buffer.
     // -------------
@@ -374,6 +625,8 @@ private:
     box3d::VertexArray*  quadvao;
     box3d::VertexBuffer* quadvbo;
     box3d::VertexBufferLayout* quadlayout;
+
+    TestScene::SandBoxScene* testscene;
 
     // -- ImGui properties.
     // --------------------

@@ -34,6 +34,7 @@ namespace Box3DHub
             this.button7 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button9 = new System.Windows.Forms.Button();
             this.OnClickSidePanel = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -42,6 +43,8 @@ namespace Box3DHub
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.userlogin1 = new Box3DHub.Userlogin();
+            this.admin1 = new Box3DHub.Admin();
             this.projects1 = new Box3DHub.Projects();
             this.installControl1 = new Box3DHub.InstallControl();
             this.learn1 = new Box3DHub.Learn();
@@ -66,18 +69,19 @@ namespace Box3DHub
             this.button8.FlatAppearance.BorderSize = 0;
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.Image = ((System.Drawing.Image)(resources.GetObject("button8.Image")));
-            this.button8.Location = new System.Drawing.Point(1001, 8);
+            this.button8.Location = new System.Drawing.Point(945, 8);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(32, 32);
             this.button8.TabIndex = 1;
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.Button8_Click);
             // 
             // button7
             // 
             this.button7.FlatAppearance.BorderSize = 0;
             this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button7.Image = ((System.Drawing.Image)(resources.GetObject("button7.Image")));
-            this.button7.Location = new System.Drawing.Point(949, 8);
+            this.button7.Location = new System.Drawing.Point(993, 8);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(32, 32);
             this.button7.TabIndex = 1;
@@ -98,6 +102,7 @@ namespace Box3DHub
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panel2.Controls.Add(this.button9);
             this.panel2.Controls.Add(this.OnClickSidePanel);
             this.panel2.Controls.Add(this.button3);
             this.panel2.Controls.Add(this.button2);
@@ -106,6 +111,22 @@ namespace Box3DHub
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(200, 575);
             this.panel2.TabIndex = 1;
+            // 
+            // button9
+            // 
+            this.button9.FlatAppearance.BorderSize = 0;
+            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button9.Font = new System.Drawing.Font("Consolas", 12F);
+            this.button9.Image = ((System.Drawing.Image)(resources.GetObject("button9.Image")));
+            this.button9.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button9.Location = new System.Drawing.Point(4, 160);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(180, 40);
+            this.button9.TabIndex = 5;
+            this.button9.Text = " Admin Panel";
+            this.button9.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.Button9_Click);
             // 
             // OnClickSidePanel
             // 
@@ -209,6 +230,21 @@ namespace Box3DHub
             this.label1.TabIndex = 3;
             this.label1.Text = "   Box3D Hub 1.0.0.beta1";
             // 
+            // userlogin1
+            // 
+            this.userlogin1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.userlogin1.Location = new System.Drawing.Point(0, 25);
+            this.userlogin1.Name = "userlogin1";
+            this.userlogin1.Size = new System.Drawing.Size(1050, 625);
+            this.userlogin1.TabIndex = 8;
+            // 
+            // admin1
+            // 
+            this.admin1.Location = new System.Drawing.Point(200, 75);
+            this.admin1.Name = "admin1";
+            this.admin1.Size = new System.Drawing.Size(850, 575);
+            this.admin1.TabIndex = 7;
+            // 
             // projects1
             // 
             this.projects1.Location = new System.Drawing.Point(200, 75);
@@ -236,15 +272,17 @@ namespace Box3DHub
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1050, 650);
+            this.Controls.Add(this.admin1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
-            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.projects1);
             this.Controls.Add(this.installControl1);
             this.Controls.Add(this.learn1);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.userlogin1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -275,6 +313,9 @@ namespace Box3DHub
         private Projects projects1;
         private Learn learn1;
         private InstallControl installControl1;
+        private Admin admin1;
+        private System.Windows.Forms.Button button9;
+        private Userlogin userlogin1;
     }
 }
 
